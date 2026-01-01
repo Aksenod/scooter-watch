@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: scooter-watch
+    runtime: node
+    region: frankfurt  # или другой ближайший регион
+    plan: free  # бесплатный план
+    rootDir: ./scooter-watch
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false  # Установите через Render Dashboard
+    healthCheckPath: /
+    autoDeploy: true
