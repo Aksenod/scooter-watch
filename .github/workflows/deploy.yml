@@ -35,9 +35,11 @@ jobs:
           static_site_generator: next
 
       - name: Install dependencies
+        working-directory: ./scooter-watch
         run: npm ci
 
       - name: Build with Next.js
+        working-directory: ./scooter-watch
         run: npm run build
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://your-backend.onrender.com' }}
@@ -45,7 +47,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: ./scooter-watch/out
 
   deploy:
     environment:
