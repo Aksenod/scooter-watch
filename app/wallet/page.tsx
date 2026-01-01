@@ -32,15 +32,10 @@ export default function WalletPage() {
 
   const fetchWallet = async () => {
     try {
-      const token = localStorage.getItem('token')
-      const response = await fetch('/api/wallet', {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setWallet(data.wallet)
-        setPendingRewards(data.pendingRewards)
-      }
+      const { apiService } = await import('@/lib/services/api')
+      const data = await apiService.getWallet()
+      setWallet(data.wallet)
+      setPendingRewards(data.pendingRewards || [])
     } catch (error) {
       console.error('Error:', error)
     } finally {

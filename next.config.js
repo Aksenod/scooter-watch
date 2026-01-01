@@ -1,10 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
-  },
+  output: 'export',
+  basePath: process.env.NODE_ENV === 'production' ? '/scooter-watch' : '',
   images: {
-    domains: ['localhost', 'your-project.supabase.co'],
+    unoptimized: true,
   },
 }
 

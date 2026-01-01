@@ -37,50 +37,43 @@ export default function RecordPage() {
 
     setIsUploading(true)
     try {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem('auth_token')
       if (!token) {
         alert('Сначала войдите по номеру телефона')
         window.location.href = '/auth'
         return
       }
 
+      const { apiService } = await import('@/lib/services/api')
+
       // Mock upload - в реальном приложении загружаем в Supabase Storage
       await new Promise(resolve => setTimeout(resolve, 800))
 
       const mockPhotoUrl = `https://mock-storage.com/photo_${Date.now()}.jpg`
-      
-      // Создаем отчет
-      const reportResponse = await fetch('/api/reports', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ 
-          photoUrl: mockPhotoUrl,
-          latitude: 55.7558,
-          longitude: 37.6173
-        }),
+
+      // Запускаем AI классификацию
+      setIsClassifying(true)
+      const reader = new FileReader()
+
+      const imageData = await new Promise<string>((resolve) => {
+        reader.onload = () => resolve(reader.result as string)
+        reader.readAsDataURL(photoFile)
       })
 
-      if (reportResponse.ok) {
-        const reportData = await reportResponse.json()
-        
-        // Запускаем AI классификацию
-        setIsClassifying(true)
-        const classifyResponse = await fetch('/api/reports/classify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ 
-            reportId: reportData.reportId,
-            photoUrl: mockPhotoUrl
-          }),
-        })
+      const aiData = await apiService.classifyReport(imageData)
 
-        if (classifyResponse.ok) {
-          const aiData = await classifyResponse.json()
-          setAiResult(aiData)
-        }
-      }
+      // Создаем отчет с результатами AI
+      await apiService.createReport({
+        violationType: aiData.violationType,
+        confidence: aiData.confidence,
+        coordinates: '55.7558,37.6173',
+        evidenceUrl: mockPhotoUrl
+      })
+
+      setAiResult(aiData)
     } catch (error) {
       console.error('Error:', error)
+      alert('Ошибка загрузки. Проверьте подключение к API.')
     } finally {
       setIsUploading(false)
       setIsClassifying(false)
