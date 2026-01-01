@@ -1,6 +1,7 @@
-// API клиент для работы с бекендом на Render
+// API клиент для работы с бекендом
+// Если NEXT_PUBLIC_API_URL не установлен, используем относительные пути (API routes в том же приложении)
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 class ApiService {
   private async request<T>(
