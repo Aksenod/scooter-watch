@@ -1,0 +1,17 @@
+# Jekyll configuration for GitHub Pages
+
+# Exclude files and directories from processing
+exclude:
+  - examples/
+  - node_modules/
+  - vendor/
+  - .next/
+  - .git/
+  - .github/
+  - README.md
+
+# Use kramdown for Markdown processing
+markdown: kramdown
+
+# Enable syntax highlighting
+highlighter: rouge
