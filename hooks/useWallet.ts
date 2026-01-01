@@ -1,24 +1,39 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { apiService } from '@/lib/services/api'
 
 export function useWallet() {
   const [balance, setBalance] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     ;(async () => {
       try {
-        const res = await fetch('/api/wallet')
-        if (res.ok) {
-          const data = await res.json()
-          setBalance(data.wallet?.balance ?? 0)
-        }
+        const data = await apiService.getWallet()
+        setBalance(data.wallet?.balance ?? 0)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load wallet')
+        console.error('Wallet error:', err)
       } finally {
         setLoading(false)
       }
     })()
   }, [])
 
-  return { balance, loading }
+  const refresh = async () => {
+    setLoading(true)
+    try {
+      const data = await apiService.getWallet()
+      setBalance(data.wallet?.balance ?? 0)
+      setError(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load wallet')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return { balance, loading, error, refresh }
 }

@@ -31,14 +31,11 @@ export default function CasePage() {
     if (!id) return
     ;(async () => {
       try {
-        const token = localStorage.getItem('token')
-        const res = await fetch(`/api/reports/${id}`, {
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        })
-        if (res.ok) {
-          const data = await res.json()
-          setReport(data.report)
-        }
+        const { apiService } = await import('@/lib/services/api')
+        const data = await apiService.getReportById(id)
+        setReport(data)
+      } catch (error) {
+        console.error('Error fetching report:', error)
       } finally {
         setLoading(false)
       }

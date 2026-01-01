@@ -26,14 +26,9 @@ export default function HistoryPage() {
 
   const fetchReports = async () => {
     try {
-      const token = localStorage.getItem('token')
-      const response = await fetch('/api/reports', {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setReports(data.reports)
-      }
+      const { apiService } = await import('@/lib/services/api')
+      const data = await apiService.getReports()
+      setReports(data)
     } catch (error) {
       console.error('Error:', error)
     } finally {

@@ -20,18 +20,12 @@ export default function AuthPage() {
   const handleOtpRequest = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/api/auth/otp-request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone }),
-      })
-      
-      if (response.ok) {
-        // OTP отправлен
-        alert('OTP код отправлен! Для демо используйте: 1234')
-      }
+      const { apiService } = await import('@/lib/services/api')
+      await apiService.requestOTP(phone)
+      alert('OTP код отправлен! Для демо используйте: 1234')
     } catch (error) {
       console.error('Error:', error)
+      alert('Ошибка отправки OTP. Проверьте подключение к API.')
     } finally {
       setLoading(false)
     }
@@ -40,20 +34,15 @@ export default function AuthPage() {
   const handleOtpVerify = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/api/auth/otp-verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, code }),
-      })
-      
-      if (response.ok) {
-        const data = await response.json()
-        // Сохраняем токен и редиректим
-        localStorage.setItem('token', data.token)
-        window.location.href = '/record'
-      }
+      const { apiService } = await import('@/lib/services/api')
+      const data = await apiService.verifyOTP(phone, code)
+      // Сохраняем токен и редиректим
+      localStorage.setItem('auth_token', data.token)
+      localStorage.setItem('auth_user', JSON.stringify(data.user))
+      window.location.href = '/record'
     } catch (error) {
       console.error('Error:', error)
+      alert('Неверный код или ошибка подключения к API')
     } finally {
       setLoading(false)
     }
