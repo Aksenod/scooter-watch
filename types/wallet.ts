@@ -1,3 +1,5 @@
+import { Reward } from './reward'
+
 export interface Wallet {
   id: string
   userId: string
