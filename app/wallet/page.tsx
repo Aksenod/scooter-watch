@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -22,13 +23,22 @@ interface Reward {
 }
 
 export default function WalletPage() {
+  const router = useRouter()
   const [wallet, setWallet] = useState<WalletData | null>(null)
   const [pendingRewards, setPendingRewards] = useState<Reward[]>([])
   const [loading, setLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
 
+  // Проверка авторизации
   useEffect(() => {
-    fetchWallet()
-  }, [])
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+    if (!token) {
+      router.push('/auth')
+    } else {
+      setIsAuthenticated(true)
+      fetchWallet()
+    }
+  }, [router])
 
   const fetchWallet = async () => {
     try {

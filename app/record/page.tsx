@@ -1,6 +1,7 @@
 'use client'
 
-import { type ChangeEvent, useRef, useState } from 'react'
+import { type ChangeEvent, useRef, useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Upload, CheckCircle, Image as ImageIcon } from 'lucide-react'
@@ -12,12 +13,24 @@ import { RewardProgress } from '@/components/record/RewardProgress'
 import { StatusCard } from '@/components/record/StatusCard'
 
 export default function RecordPage() {
+  const router = useRouter()
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState<string | null>(null)
   const [aiResult, setAiResult] = useState<any>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [isClassifying, setIsClassifying] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Проверка авторизации при загрузке страницы
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+    if (!token) {
+      router.push('/auth')
+    } else {
+      setIsAuthenticated(true)
+    }
+  }, [router])
 
   const openCamera = () => {
     fileInputRef.current?.click()
@@ -37,12 +50,6 @@ export default function RecordPage() {
 
     setIsUploading(true)
     try {
-      const token = localStorage.getItem('auth_token')
-      if (!token) {
-        alert('Сначала войдите по номеру телефона')
-        window.location.href = '/auth'
-        return
-      }
 
       const { apiService } = await import('@/lib/services/api')
 
@@ -83,7 +90,16 @@ export default function RecordPage() {
   const submitReport = async () => {
     // В реальном приложении обновляем статус отчета
     alert('Отчет успешно отправлен!')
-    window.location.href = '/history'
+    router.push('/history')
+  }
+
+  // Показываем загрузку пока проверяем авторизацию
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
   }
 
   return (

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -17,12 +18,21 @@ interface Report {
 }
 
 export default function HistoryPage() {
+  const router = useRouter()
   const [reports, setReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
 
+  // Проверка авторизации
   useEffect(() => {
-    fetchReports()
-  }, [])
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+    if (!token) {
+      router.push('/auth')
+    } else {
+      setIsAuthenticated(true)
+      fetchReports()
+    }
+  }, [router])
 
   const fetchReports = async () => {
     try {
