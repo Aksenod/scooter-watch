@@ -1,4 +1,4 @@
-import { Reward } from './reward'
+import type { Reward } from './reward'
 
 export interface Wallet {
   id: string

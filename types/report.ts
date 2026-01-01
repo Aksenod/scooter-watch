@@ -1,5 +1,5 @@
-import { Evidence } from './evidence'
-import { Reward } from './reward'
+import type { Evidence } from './evidence'
+import type { Reward } from './reward'
 
 export interface Report {
   id: string
