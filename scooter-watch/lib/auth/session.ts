@@ -8,9 +8,19 @@ export function getBearerToken(req: NextRequest): string | null {
   return token
 }
 
-export function requireUserId(req: NextRequest): { userId: string } | { error: string } {
+export async function requireUserId(req: NextRequest): Promise<string> {
   const token = getBearerToken(req)
-  if (!token) return { error: 'Unauthorized' }
-  // MVP: token == userId
-  return { userId: token }
+  if (!token) {
+    throw new Error('Unauthorized')
+  }
+  // MVP: token == userId (в продакшене проверять через JWT или БД)
+  // Проверяем, что пользователь существует
+  const { prisma } = await import('@/lib/prisma')
+  const user = await prisma.user.findUnique({
+    where: { id: token },
+  })
+  if (!user) {
+    throw new Error('Unauthorized')
+  }
+  return token
 }
