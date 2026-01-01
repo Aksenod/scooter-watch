@@ -50,7 +50,7 @@ Feature-Based Architecture Infrastructure
 - **docs/FEATURE_MIGRATION_GUIDE.md** - План миграции кода
 
 ### Примеры
-- **examples/how-to-use-features.tsx** - 10 практических примеров использования
+- **examples/how-to-use-features.md** - 10 практических примеров использования
 
 ## 🚀 Готово к использованию
 
@@ -98,7 +98,7 @@ const reward = calculateReward('sidewalk') // 400
 ## 📚 Документация для ревьюверов
 
 - Начни с [START_HERE.md](./START_HERE.md) (5 минут)
-- Посмотри примеры в [examples/how-to-use-features.tsx](./examples/how-to-use-features.tsx)
+- Посмотри примеры в [examples/how-to-use-features.md](./examples/how-to-use-features.md)
 - Изучи [FEATURES.md](./FEATURES.md) для полного понимания
 
 ## ⚠️ Breaking Changes

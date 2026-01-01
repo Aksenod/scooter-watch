@@ -33,7 +33,7 @@
 - Сокращение кода на 40%!
 
 ### 3️⃣ Для изучения примеров кода
-👉 **[examples/how-to-use-features.tsx](./examples/how-to-use-features.tsx)**
+👉 **[examples/how-to-use-features.md](./examples/how-to-use-features.md)**
 
 10 практических примеров:
 - Как использовать каждую фичу
@@ -121,7 +121,7 @@ scooter-watch/
 │   └── ARCHITECTURE.md
 │
 └── examples/            # 🆕 ПРИМЕРЫ
-    └── how-to-use-features.tsx
+    └── how-to-use-features.md
 ```
 
 ---
@@ -250,7 +250,7 @@ const report: Report = data
 
 ## 🤝 Нужна помощь?
 
-1. **Примеры кода** → [examples/how-to-use-features.tsx](./examples/how-to-use-features.tsx)
+1. **Примеры кода** → [examples/how-to-use-features.md](./examples/how-to-use-features.md)
 2. **Быстрый старт** → [GETTING_STARTED.md](./docs/GETTING_STARTED.md)
 3. **Туториал** → [TUTORIAL_FIRST_MIGRATION.md](./docs/TUTORIAL_FIRST_MIGRATION.md)
 4. **Шпаргалка** → [QUICK_REFERENCE.md](./docs/QUICK_REFERENCE.md)
