@@ -47,6 +47,8 @@ jobs:
           const nextConfig = {
             output: 'export',
             basePath: '/scooter-watch',
+            assetPrefix: '/scooter-watch',
+            trailingSlash: true,
             images: {
               unoptimized: true,
             },
@@ -59,6 +61,7 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://your-backend.onrender.com' }}
           GITHUB_PAGES: 'true'
+          NODE_ENV: 'production'
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
