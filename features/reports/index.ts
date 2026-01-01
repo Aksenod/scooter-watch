@@ -2,35 +2,33 @@
  * Reports Feature - Public API
  */
 
-// Components
-// TODO: Create report components
+// Components (будут созданы при миграции)
 // export { ReportCard } from './components/ReportCard'
 // export { ReportList } from './components/ReportList'
 // export { ReportDetails } from './components/ReportDetails'
 // export { StatusBadge } from './components/StatusBadge'
 
-// Hooks
-// TODO: Create report hooks
+// Hooks (будут созданы при миграции)
 // export { useReports } from './hooks/useReports'
 // export { useReportDetails } from './hooks/useReportDetails'
 
 // Types
-// TODO: Migrate from /types/report.ts
-// export type {
-//   Report,
-//   ReportStatus,
-//   ViolationType,
-//   CreateReportInput,
-// } from './types'
+export type {
+  Report,
+  ReportStatus,
+  ViolationType,
+  CreateReportInput,
+  ReportFilters,
+} from './types'
 
 // Constants
 export { REPORT_CONSTANTS } from './constants'
 
 // Utils
-// TODO: Create utility functions
-// export {
-//   getStatusLabel,
-//   getStatusColor,
-//   getViolationLabel,
-//   formatReportDate,
-// } from './utils'
+export {
+  getStatusLabel,
+  getStatusColor,
+  getViolationLabel,
+  formatReportDate,
+  calculateReward,
+} from './utils'
