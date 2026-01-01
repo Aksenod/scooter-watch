@@ -1,3 +1,6 @@
+import { Evidence } from './evidence'
+import { Reward } from './reward'
+
 export interface Report {
   id: string
   userId: string
