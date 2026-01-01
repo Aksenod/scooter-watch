@@ -8,41 +8,45 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft, Shield } from 'lucide-react'
 
 export default function AuthPage() {
-  const [step, setStep] = useState<'consent' | 'otp'>('consent')
+  const [step, setStep] = useState<'consent' | 'phone'>('consent')
   const [phone, setPhone] = useState('')
-  const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleConsent = () => {
-    setStep('otp')
+    setStep('phone')
   }
 
-  const handleOtpRequest = async () => {
-    setLoading(true)
-    try {
-      const { apiService } = await import('@/lib/services/api')
-      await apiService.requestOTP(phone)
-      alert('OTP код отправлен! Для демо используйте: 1234')
-    } catch (error) {
-      console.error('Error:', error)
-      alert('Ошибка отправки OTP. Проверьте подключение к API.')
-    } finally {
-      setLoading(false)
+  const handleLogin = async () => {
+    if (!phone || phone.trim().length < 10) {
+      alert('Введите корректный номер телефона')
+      return
     }
-  }
 
-  const handleOtpVerify = async () => {
     setLoading(true)
     try {
-      const { apiService } = await import('@/lib/services/api')
-      const data = await apiService.verifyOTP(phone, code)
-      // Сохраняем токен и редиректим
-      localStorage.setItem('auth_token', data.token)
-      localStorage.setItem('auth_user', JSON.stringify(data.user))
+      // Упрощённая авторизация без OTP для GitHub Pages
+      // Нормализация номера телефона
+      const normalizedPhone = phone.replace(/\D/g, '')
+
+      // Генерируем простой ID из номера телефона
+      const userId = `user_${normalizedPhone}`
+
+      // Создаём объект пользователя
+      const user = {
+        id: userId,
+        phone: normalizedPhone,
+        name: `User ${normalizedPhone.slice(-4)}`,
+      }
+
+      // Сохраняем в localStorage
+      localStorage.setItem('auth_token', userId)
+      localStorage.setItem('auth_user', JSON.stringify(user))
+
+      // Редирект на главную страницу
       window.location.href = '/record'
     } catch (error) {
       console.error('Error:', error)
-      alert('Неверный код или ошибка подключения к API')
+      alert('Ошибка входа. Попробуйте снова.')
     } finally {
       setLoading(false)
     }
@@ -94,9 +98,9 @@ export default function AuthPage() {
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Вход по OTP</CardTitle>
+            <CardTitle className="text-2xl">Вход в приложение</CardTitle>
             <CardDescription>
-              Введите номер телефона для получения кода
+              Введите номер телефона для входа
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -109,40 +113,25 @@ export default function AuthPage() {
                 placeholder="+79991234567"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-            
-            <Button 
-              onClick={handleOtpRequest} 
-              disabled={!phone || loading}
-              className="w-full"
-            >
-              {loading ? 'Отправка...' : 'Отправить код'}
-            </Button>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                OTP код
-              </label>
-              <Input
-                type="text"
-                placeholder="1234"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && phone && !loading) {
+                    handleLogin()
+                  }
+                }}
               />
               <p className="text-xs text-gray-500 mt-1">
-                Демо код: 1234
+                Демо версия: вход без SMS кода
               </p>
             </div>
-            
-            <Button 
-              onClick={handleOtpVerify} 
+
+            <Button
+              onClick={handleLogin}
               disabled={!phone || loading}
               className="w-full"
             >
-              {loading ? 'Проверка...' : 'Войти'}
+              {loading ? 'Вход...' : 'Войти'}
             </Button>
-            
+
             <Link href="/" className="block">
               <Button variant="outline" className="w-full">
                 <ArrowLeft className="w-4 h-4 mr-2" />
