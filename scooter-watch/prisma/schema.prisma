@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  phone       String   @unique
+  name        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  reports     Report[]
+  wallet      Wallet?
+  rewards     Reward[]
+}
+
+model Report {
+  id              String   @id @default(cuid())
+  userId          String
+  violationType   String   // "sidewalk", "wrongparking", etc.
+  status          String   @default("submitted") // submitted, underreview, fineissued, rejected
+  confidence      Float?   // AI confidence 0-1
+  latitude        Float?
+  longitude       Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id])
+  evidence        Evidence[]
+  reward          Reward?
+  
+  @@index([userId])
+  @@index([status])
+}
+
+model Evidence {
+  id          String   @id @default(cuid())
+  reportId    String
+  type        String   // "photo" or "video"
+  url         String
+  createdAt   DateTime @default(now())
+  
+  report      Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  
+  @@index([reportId])
+}
+
+model Reward {
+  id          String   @id @default(cuid())
+  userId      String
+  reportId    String   @unique
+  amount      Float    // 20% от штрафа
+  status      String   @default("pending") // pending, approved, paid
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id])
+  report      Report   @relation(fields: [reportId], references: [id])
+  
+  @@index([userId])
+}
+
+model Wallet {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  balance     Float    @default(0)
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id])
+}

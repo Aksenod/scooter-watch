@@ -1,0 +1,21 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    // Feature-based architecture rules
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@/features/*/components/*", "@/features/*/hooks/*", "@/features/*/utils/*"],
+            "message": "Импортируй только через barrel export: '@/features/<feature-name>'"
+          },
+          {
+            "group": ["../features/*"],
+            "message": "Используй alias: '@/features/<feature-name>'"
+          }
+        ]
+      }
+    ]
+  }
+}
