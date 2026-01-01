@@ -99,7 +99,7 @@ const label = getStatusLabel(status) // "Отправлено"
 - 📕 [Migration Guide](./docs/FEATURE_MIGRATION_GUIDE.md) - План миграции
 
 **Примеры:**
-- 💡 [How to Use Features](./examples/how-to-use-features.tsx) - 10 практических примеров
+- 💡 [How to Use Features](./examples/how-to-use-features.md) - 10 практических примеров
 
 ### Быстрые примеры
 
@@ -168,7 +168,7 @@ const status: ReportStatus = 'submitted'
 
 2. **Изучи пример:**
    - [Tutorial](./docs/TUTORIAL_FIRST_MIGRATION.md) - 15 минут
-   - [Examples](./examples/how-to-use-features.tsx) - просмотр кода
+   - [Examples](./examples/how-to-use-features.md) - просмотр кода
 
 3. **Начни кодить:**
    - Используй константы из фич

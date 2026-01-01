@@ -371,7 +371,7 @@ function getStatusBadgeVariant(status: Report['status']) {
 
 ## Вопросы?
 
-- Смотри примеры в `/examples/how-to-use-features.tsx`
+- Смотри примеры в `/examples/how-to-use-features.md`
 - Читай документацию в `/docs/`
 - Проверяй константы в `/features/*/constants.ts`
 

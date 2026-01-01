@@ -310,7 +310,7 @@ import { Button } from '@/shared/ui'
 - **Начни с малого** - замени константы в одном файле
 - **Проверяй TypeScript** - `npm run build` после каждого изменения
 - **Используй автокомплит** - IDE теперь подсказывает всё!
-- **Смотри примеры** - `/examples/how-to-use-features.tsx`
+- **Смотри примеры** - `/examples/how-to-use-features.md`
 
 ---
 
@@ -319,7 +319,7 @@ import { Button } from '@/shared/ui'
 - [FEATURES.md](../FEATURES.md) - Обзор фич
 - [QUICK_REFERENCE.md](./QUICK_REFERENCE.md) - Быстрая справка
 - [ARCHITECTURE.md](./ARCHITECTURE.md) - Архитектура
-- [examples/how-to-use-features.tsx](../examples/how-to-use-features.tsx) - Примеры кода
+- [examples/how-to-use-features.md](../examples/how-to-use-features.md) - Примеры кода
 
 ---
 
