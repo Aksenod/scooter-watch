@@ -1,3 +1,6 @@
+import type { Evidence } from './evidence'
+import type { Reward } from './reward'
+
 export interface Report {
   id: string
   userId: string

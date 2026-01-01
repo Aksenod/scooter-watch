@@ -158,7 +158,7 @@ export default function HistoryPage() {
                           +{report.rewardAmount} ₽
                         </span>
                       </div>
-                      <Link href={`/case/${report.id}`}>
+                      <Link href={`/case?id=${report.id}`}>
                         <Button variant="outline" size="sm">
                           <Eye className="w-4 h-4 mr-1" />
                           Подробнее

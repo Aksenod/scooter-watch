@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -20,15 +20,18 @@ interface ReportDetail {
   evidence: { id: string; type: 'video' | 'photo'; url: string }[]
 }
 
-export default function CasePage() {
-  const params = useParams<{ id: string }>()
-  const id = params?.id
+function CaseContent() {
+  const searchParams = useSearchParams()
+  const id = searchParams.get('id')
 
   const [report, setReport] = useState<ReportDetail | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!id) return
+    if (!id) {
+      setLoading(false)
+      return
+    }
     ;(async () => {
       try {
         const { apiService } = await import('@/lib/services/api')
@@ -71,7 +74,7 @@ export default function CasePage() {
     )
   }
 
-  if (!report) {
+  if (!id || !report) {
     return (
       <div className="min-h-screen bg-gray-50 pb-20">
         <div className="max-w-4xl mx-auto p-4">
@@ -149,5 +152,23 @@ export default function CasePage() {
 
       <BottomNav />
     </div>
+  )
+}
+
+export default function CasePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 pb-20">
+        <div className="max-w-4xl mx-auto p-4">
+          <div className="text-center py-12">
+            <div className="w-8 h-8 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            <p className="mt-4">Загрузка...</p>
+          </div>
+        </div>
+        <BottomNav />
+      </div>
+    }>
+      <CaseContent />
+    </Suspense>
   )
 }
