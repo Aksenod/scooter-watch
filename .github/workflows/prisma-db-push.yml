@@ -5,6 +5,9 @@ on:
     branches:
       - main
       - master
+    paths:
+      - 'prisma/schema.prisma'
+      - 'scooter-watch/prisma/schema.prisma'
   workflow_dispatch:
 
 jobs:
