@@ -3,18 +3,22 @@
  */
 
 // Components
-export { ConfidenceBadge } from './components/ConfidenceBadge'
-export { ConfidenceMeter } from './components/ConfidenceMeter'
-export { ClassificationResult } from './components/ClassificationResult'
+// TODO: Migrate from /components/record/
+// export { ConfidenceBadge } from './components/ConfidenceBadge'
+// export { ConfidenceMeter } from './components/ConfidenceMeter'
+// export { ClassificationResult } from './components/ClassificationResult'
 
 // Hooks
-export { useClassification } from './hooks/useClassification'
+// TODO: Create classification hook
+// export { useClassification } from './hooks/useClassification'
 
 // Types
-export type { ClassificationResult as ClassificationResultType } from './types'
+// TODO: Migrate types
+// export type { ClassificationResult as ClassificationResultType } from './types'
 
 // Constants
 export { CLASSIFICATION_CONSTANTS } from './constants'
 
 // Utils
-export { getConfidenceColor, isHighConfidence } from './utils'
+// TODO: Create utility functions
+// export { getConfidenceColor, isHighConfidence } from './utils'
