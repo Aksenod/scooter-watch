@@ -4,26 +4,48 @@ import { type ChangeEvent, useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/shared/ui'
-import { Upload, CheckCircle, Image as ImageIcon, Camera, Sparkles, ArrowRight, Lightbulb, RotateCcw, ChevronDown } from 'lucide-react'
+import { Upload, CheckCircle, Image as ImageIcon, Sparkles, ArrowRight, Lightbulb, RotateCcw, ChevronDown } from 'lucide-react'
 import { BottomNav } from '@/shared/components/layout'
 import {
   CameraFab,
   ConfidenceBadge,
   ConfidenceMeter,
-  RewardProgress,
 } from '@/features/recording'
+
+const VIOLATION_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: 'sidewalk', label: 'Езда по тротуару' },
+  { value: 'wrongparking', label: 'Неправильная парковка' },
+  { value: 'trafficviolation', label: 'Нарушение ПДД (проезд/перестроение)' },
+  { value: 'helmetmissing', label: 'Без шлема' },
+  { value: 'double_riding', label: 'Езда вдвоём' },
+  { value: 'crosswalk', label: 'Езда по пешеходному переходу' },
+  { value: 'red_light', label: 'Проезд на красный' },
+  { value: 'phone_use', label: 'Телефон в руках во время движения' },
+  { value: 'other', label: 'Другое' },
+]
 
 export default function RecordPage() {
   const router = useRouter()
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState<string | null>(null)
+  const [uploadedEvidenceUrl, setUploadedEvidenceUrl] = useState<string | null>(null)
   const [aiResult, setAiResult] = useState<any>(null)
+  const [selectedViolationType, setSelectedViolationType] = useState<string>('sidewalk')
   const [isUploading, setIsUploading] = useState(false)
   const [isClassifying, setIsClassifying] = useState(false)
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [tipsOpen, setTipsOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (aiResult?.violationType) {
+      const next = String(aiResult.violationType)
+      const exists = VIOLATION_OPTIONS.some((o) => o.value === next)
+      setSelectedViolationType(exists ? next : 'other')
+    }
+  }, [aiResult])
 
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
@@ -44,6 +66,7 @@ export default function RecordPage() {
 
     setError(null)
     setAiResult(null)
+    setUploadedEvidenceUrl(null)
     setPhotoFile(file)
     setPhotoPreviewUrl(URL.createObjectURL(file))
   }
@@ -54,8 +77,12 @@ export default function RecordPage() {
     setIsUploading(true)
     try {
       const { apiService } = await import('@/lib/services/api')
+
+      // Mock upload - в реальном приложении загружаем в Supabase Storage
       await new Promise(resolve => setTimeout(resolve, 800))
+
       const mockPhotoUrl = `https://mock-storage.com/photo_${Date.now()}.jpg`
+      setUploadedEvidenceUrl(mockPhotoUrl)
 
       setIsClassifying(true)
       const reader = new FileReader()
@@ -66,13 +93,6 @@ export default function RecordPage() {
       })
 
       const aiData = await apiService.classifyReport(imageData)
-
-      await apiService.createReport({
-        violationType: aiData.violationType,
-        confidence: aiData.confidence,
-        coordinates: '55.7558,37.6173',
-        evidenceUrl: mockPhotoUrl
-      })
 
       setAiResult(aiData)
     } catch (error) {
@@ -85,7 +105,28 @@ export default function RecordPage() {
   }
 
   const submitReport = async () => {
-    router.push('/history')
+    setError(null)
+    if (!aiResult?.confidence || !uploadedEvidenceUrl) {
+      setError('Сначала сделайте фото и запустите AI-анализ')
+      return
+    }
+
+    setIsSubmittingReport(true)
+    try {
+      const { apiService } = await import('@/lib/services/api')
+      await apiService.createReport({
+        violationType: selectedViolationType,
+        confidence: Number(aiResult.confidence) || 0,
+        coordinates: '55.7558,37.6173',
+        evidenceUrl: uploadedEvidenceUrl,
+      })
+      router.push('/history')
+    } catch (e) {
+      console.error('Create report error:', e)
+      setError('Не удалось отправить отчёт. Попробуйте ещё раз.')
+    } finally {
+      setIsSubmittingReport(false)
+    }
   }
 
   if (isAuthenticated === null) {
@@ -227,8 +268,18 @@ export default function RecordPage() {
             
             <div className="space-y-3 mb-5">
               <div className="rounded-xl bg-card p-3">
-                <p className="text-xs text-muted-foreground mb-1">Тип нарушения</p>
-                <p className="font-semibold capitalize">{aiResult.violationType}</p>
+                <p className="text-xs text-muted-foreground mb-2">Тип нарушения (можно поправить)</p>
+                <select
+                  value={selectedViolationType}
+                  onChange={(e) => setSelectedViolationType(e.target.value)}
+                  className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
+                >
+                  {VIOLATION_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="rounded-xl bg-card p-3">
                 <p className="text-xs text-muted-foreground mb-2">Уверенность AI</p>
@@ -237,8 +288,8 @@ export default function RecordPage() {
             </div>
 
             <div className="flex gap-3">
-              <Button onClick={submitReport} className="flex-1 shadow-lg shadow-primary/20">
-                Отправить отчёт
+              <Button onClick={submitReport} disabled={isSubmittingReport} className="flex-1 shadow-lg shadow-primary/20">
+                {isSubmittingReport ? 'Отправка...' : 'Отправить отчёт'}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
               <Button variant="outline" onClick={() => window.location.reload()}>

@@ -84,6 +84,11 @@ export default function HistoryPage() {
       case 'wrongparking': return 'Неправильная парковка'
       case 'trafficviolation': return 'Нарушение ПДД'
       case 'helmetmissing': return 'Отсутствие шлема'
+      case 'double_riding': return 'Езда вдвоём'
+      case 'crosswalk': return 'Езда по пешеходному переходу'
+      case 'red_light': return 'Проезд на красный'
+      case 'phone_use': return 'Телефон в руках во время движения'
+      case 'other': return 'Другое'
       default: return type
     }
   }
