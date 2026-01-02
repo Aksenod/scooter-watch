@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Badge, Button } from '@/shared/ui'
 import { Calendar, Camera, ChevronRight, FileText, TrendingUp } from 'lucide-react'
@@ -26,6 +26,7 @@ const filters = [
 
 export default function HistoryPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [reports, setReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
@@ -40,6 +41,13 @@ export default function HistoryPage() {
       fetchReports()
     }
   }, [router])
+
+  useEffect(() => {
+    const filterParam = searchParams.get('filter')
+    if (filterParam && ['submitted', 'underreview', 'fineissued', 'rejected'].includes(filterParam)) {
+      setFilter(filterParam as any)
+    }
+  }, [searchParams])
 
   const fetchReports = async () => {
     try {
