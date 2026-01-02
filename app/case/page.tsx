@@ -58,12 +58,27 @@ function CaseContent() {
     }
   }
 
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case 'submitted':
+        return 'secondary'
+      case 'underreview':
+        return 'warning'
+      case 'fineissued':
+        return 'success'
+      case 'rejected':
+        return 'destructive'
+      default:
+        return 'secondary'
+    }
+  }
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 pb-20">
-        <div className="max-w-4xl mx-auto p-4">
+      <div className="min-h-screen bg-background pb-20">
+        <div className="max-w-md mx-auto p-4">
           <div className="text-center py-12">
-            <div className="w-8 h-8 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 mx-auto border-4 border-primary border-t-transparent rounded-full animate-spin" />
             <p className="mt-4">Загрузка кейса...</p>
           </div>
         </div>
@@ -74,8 +89,8 @@ function CaseContent() {
 
   if (!id || !report) {
     return (
-      <div className="min-h-screen bg-gray-50 pb-20">
-        <div className="max-w-4xl mx-auto p-4">
+      <div className="min-h-screen bg-background pb-20">
+        <div className="max-w-md mx-auto p-4">
           <Card>
             <CardContent className="p-8 text-center">
               <p className="mb-4">Кейс не найден</p>
@@ -93,8 +108,8 @@ function CaseContent() {
   const photoEvidence = report.evidence.find((e) => e.type === 'photo')
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="max-w-4xl mx-auto p-4">
+    <div className="min-h-screen bg-background pb-20">
+      <div className="max-w-md mx-auto p-4">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
             <Link href="/history">
@@ -104,7 +119,7 @@ function CaseContent() {
             </Link>
             <h1 className="text-2xl font-bold">Кейс #{report.id.slice(-6)}</h1>
           </div>
-          <Badge>{getStatusText(report.status)}</Badge>
+          <Badge variant={getStatusVariant(report.status) as any}>{getStatusText(report.status)}</Badge>
         </div>
 
         <Card className="mb-6">
@@ -112,18 +127,18 @@ function CaseContent() {
             <CardTitle>Детали</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex items-center text-sm text-gray-600">
+            <div className="flex items-center text-sm text-muted-foreground">
               <Calendar className="w-4 h-4 mr-2" />
               {new Date(report.createdAt).toLocaleString('ru-RU')}
             </div>
-            <div className="flex items-center text-sm text-gray-600">
+            <div className="flex items-center text-sm text-muted-foreground">
               <MapPin className="w-4 h-4 mr-2" />
               {typeof report.latitude === 'number' && typeof report.longitude === 'number'
                 ? `${report.latitude.toFixed(4)}, ${report.longitude.toFixed(4)}`
                 : 'Локация не указана'}
             </div>
             {typeof report.confidence === 'number' && (
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-muted-foreground">
                 Уверенность AI: {Math.round(report.confidence * 100)}%
               </div>
             )}
@@ -142,7 +157,7 @@ function CaseContent() {
               // eslint-disable-next-line @next/next/no-img-element
               <img src={photoEvidence.url} alt="Фото нарушения" className="w-full rounded-lg" />
             ) : (
-              <p className="text-sm text-gray-600">Фото не найдено</p>
+              <p className="text-sm text-muted-foreground">Фото не найдено</p>
             )}
           </CardContent>
         </Card>
@@ -156,10 +171,10 @@ function CaseContent() {
 export default function CasePage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 pb-20">
-        <div className="max-w-4xl mx-auto p-4">
+      <div className="min-h-screen bg-background pb-20">
+        <div className="max-w-md mx-auto p-4">
           <div className="text-center py-12">
-            <div className="w-8 h-8 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 mx-auto border-4 border-primary border-t-transparent rounded-full animate-spin" />
             <p className="mt-4">Загрузка...</p>
           </div>
         </div>

@@ -26,6 +26,7 @@ export default function WalletPage() {
   const [pendingRewards, setPendingRewards] = useState<Reward[]>([])
   const [loading, setLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
 
   // Проверка авторизации
   useEffect(() => {
@@ -52,25 +53,26 @@ export default function WalletPage() {
   }
 
   const handleWithdraw = async () => {
+    setMessage(null)
     if (!wallet || wallet.balance < 500) {
-      alert('Минимальная сумма для вывода: 500 ₽')
+      setMessage('Минимальная сумма для вывода: 500 ₽')
       return
     }
 
     // Mock withdrawal - в реальном приложении интегрируем с YooKassa
-    alert(`Запрос на вывод ${wallet.balance} ₽ отправлен!`)
+    setMessage(`Запрос на вывод ${wallet.balance} ₽ отправлен!`)
   }
 
-  const getRewardStatusColor = (status: string) => {
+  const getRewardStatusVariant = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800'
+        return 'warning'
       case 'approved':
-        return 'bg-blue-100 text-blue-800'
+        return 'secondary'
       case 'paid':
-        return 'bg-green-100 text-green-800'
+        return 'success'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'secondary'
     }
   }
 
@@ -89,10 +91,10 @@ export default function WalletPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 pb-20">
-        <div className="max-w-4xl mx-auto p-4">
+      <div className="min-h-screen bg-background pb-20">
+        <div className="max-w-md mx-auto p-4">
           <div className="text-center py-12">
-            <div className="w-8 h-8 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 mx-auto border-4 border-primary border-t-transparent rounded-full animate-spin" />
             <p className="mt-4">Загрузка кошелька...</p>
           </div>
         </div>
@@ -102,25 +104,25 @@ export default function WalletPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="max-w-4xl mx-auto p-4">
+    <div className="min-h-screen bg-background pb-20">
+      <div className="max-w-md mx-auto p-4">
         <h1 className="text-2xl font-bold mb-6">Кошелек</h1>
 
         {/* Balance Card */}
-        <Card className="mb-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+        <Card className="mb-6 bg-primary text-primary-foreground">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
                 <WalletIcon className="w-8 h-8 mr-3" />
                 <div>
-                  <p className="text-blue-100">Баланс</p>
+                  <p className="text-primary-foreground/70">Баланс</p>
                   <p className="text-3xl font-bold">
                     {wallet ? `${wallet.balance} ₽` : '0 ₽'}
                   </p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-blue-100 text-sm">Доступно к выводу</p>
+                <p className="text-primary-foreground/70 text-sm">Доступно к выводу</p>
                 <p className="text-xl font-semibold">
                   {wallet ? `${wallet.balance} ₽` : '0 ₽'}
                 </p>
@@ -129,18 +131,20 @@ export default function WalletPage() {
             
             <Button 
               onClick={handleWithdraw}
-              className="w-full bg-white text-blue-600 hover:bg-blue-50"
+              className="w-full bg-background text-foreground hover:bg-surface"
               disabled={!wallet || wallet.balance < 500}
             >
               Вывести средства
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
             
-            {wallet && wallet.balance < 500 && (
-              <p className="text-xs text-blue-100 mt-2 text-center">
+            {message ? (
+              <p className="text-xs text-primary-foreground/80 mt-2 text-center">{message}</p>
+            ) : wallet && wallet.balance < 500 ? (
+              <p className="text-xs text-primary-foreground/80 mt-2 text-center">
                 Минимальная сумма для вывода: 500 ₽
               </p>
-            )}
+            ) : null}
           </CardContent>
         </Card>
 
@@ -148,25 +152,25 @@ export default function WalletPage() {
         <div className="grid grid-cols-2 gap-4 mb-6">
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+              <div className="w-12 h-12 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-2">
+                <TrendingUp className="w-6 h-6 text-foreground" />
               </div>
-              <p className="text-2xl font-bold text-green-600">
+              <p className="text-2xl font-bold">
                 {pendingRewards.filter(r => r.status === 'paid').reduce((sum, r) => sum + r.amount, 0)} ₽
               </p>
-              <p className="text-sm text-gray-600">Выплачено</p>
+              <p className="text-sm text-muted-foreground">Выплачено</p>
             </CardContent>
           </Card>
           
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Clock className="w-6 h-6 text-yellow-600" />
+              <div className="w-12 h-12 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Clock className="w-6 h-6 text-foreground" />
               </div>
-              <p className="text-2xl font-bold text-yellow-600">
+              <p className="text-2xl font-bold">
                 {pendingRewards.filter(r => r.status === 'pending').reduce((sum, r) => sum + r.amount, 0)} ₽
               </p>
-              <p className="text-sm text-gray-600">Ожидает</p>
+              <p className="text-sm text-muted-foreground">Ожидает</p>
             </CardContent>
           </Card>
         </div>
@@ -180,16 +184,16 @@ export default function WalletPage() {
             <CardContent>
               <div className="space-y-3">
                 {pendingRewards.map((reward) => (
-                  <div key={reward.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={reward.id} className="flex items-center justify-between p-3 bg-surface rounded-lg">
                     <div>
                       <p className="font-medium">Отчет #{reward.reportId.slice(-6)}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-muted-foreground">
                         {new Date(reward.createdAt).toLocaleDateString('ru-RU')}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-green-600">+{reward.amount} ₽</p>
-                      <Badge className={getRewardStatusColor(reward.status)}>
+                      <p className="font-semibold">+{reward.amount} ₽</p>
+                      <Badge variant={getRewardStatusVariant(reward.status) as any}>
                         {getRewardStatusText(reward.status)}
                       </Badge>
                     </div>
@@ -204,11 +208,11 @@ export default function WalletPage() {
         {pendingRewards.length === 0 && (
           <Card>
             <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <WalletIcon className="w-8 h-8 text-gray-400" />
+              <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-4">
+                <WalletIcon className="w-8 h-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Нет вознаграждений</h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-muted-foreground mb-4">
                 Создавайте отчеты и получайте вознаграждения за подтвержденные нарушения
               </p>
             </CardContent>

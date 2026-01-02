@@ -44,18 +44,18 @@ export default function HistoryPage() {
     }
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string) => {
     switch (status) {
       case 'submitted':
-        return 'bg-blue-100 text-blue-800'
+        return 'secondary'
       case 'underreview':
-        return 'bg-yellow-100 text-yellow-800'
+        return 'warning'
       case 'fineissued':
-        return 'bg-green-100 text-green-800'
+        return 'success'
       case 'rejected':
-        return 'bg-red-100 text-red-800'
+        return 'destructive'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'secondary'
     }
   }
 
@@ -91,10 +91,10 @@ export default function HistoryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 pb-20">
-        <div className="max-w-4xl mx-auto p-4">
+      <div className="min-h-screen bg-background pb-20">
+        <div className="max-w-md mx-auto p-4">
           <div className="text-center py-12">
-            <div className="w-8 h-8 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 mx-auto border-4 border-primary border-t-transparent rounded-full animate-spin" />
             <p className="mt-4">Загрузка истории...</p>
           </div>
         </div>
@@ -104,11 +104,11 @@ export default function HistoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="max-w-4xl mx-auto p-4">
+    <div className="min-h-screen bg-background pb-20">
+      <div className="max-w-md mx-auto p-4">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">История отчетов</h1>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-muted-foreground">
             Всего: {reports.length}
           </div>
         </div>
@@ -116,11 +116,11 @@ export default function HistoryPage() {
         {reports.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Calendar className="w-8 h-8 text-gray-400" />
+              <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Calendar className="w-8 h-8 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Нет отчетов</h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-muted-foreground mb-4">
                 Вы еще не создали ни одного отчета
               </p>
               <Link href="/record">
@@ -131,14 +131,14 @@ export default function HistoryPage() {
         ) : (
           <div className="space-y-4">
             {reports.map((report) => (
-              <Card key={report.id} className="hover:shadow-md transition-shadow">
+              <Card key={report.id} className="transition-colors hover:bg-surface">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       <h3 className="font-semibold capitalize mb-1">
                         {getViolationTypeText(report.violationType)}
                       </h3>
-                      <div className="flex items-center text-sm text-gray-600 mb-2">
+                      <div className="flex items-center text-sm text-muted-foreground mb-2">
                         <Calendar className="w-4 h-4 mr-1" />
                         {new Date(report.createdAt).toLocaleDateString('ru-RU', {
                           day: 'numeric',
@@ -147,33 +147,34 @@ export default function HistoryPage() {
                           minute: '2-digit'
                         })}
                       </div>
-                      <div className="flex items-center text-sm text-gray-600">
+                      <div className="flex items-center text-sm text-muted-foreground">
                         <MapPin className="w-4 h-4 mr-1" />
                         Москва, Россия
                       </div>
                     </div>
-                    
-                    <Badge className={getStatusColor(report.status)}>
+
+                    <Badge variant={getStatusVariant(report.status) as any}>
                       {getStatusText(report.status)}
                     </Badge>
                   </div>
 
-                  {report.rewardAmount && (
-                    <div className="flex items-center justify-between pt-3 border-t">
-                      <div className="flex items-center text-green-600">
+                  <div className="flex items-center justify-between pt-3 border-t">
+                    {typeof report.rewardAmount === 'number' ? (
+                      <div className="flex items-center text-success">
                         <TrendingUp className="w-4 h-4 mr-1" />
-                        <span className="font-medium">
-                          +{report.rewardAmount} ₽
-                        </span>
+                        <span className="font-medium">+{report.rewardAmount} ₽</span>
                       </div>
-                      <Link href={`/case?id=${report.id}`}>
-                        <Button variant="outline" size="sm">
-                          <Eye className="w-4 h-4 mr-1" />
-                          Подробнее
-                        </Button>
-                      </Link>
-                    </div>
-                  )}
+                    ) : (
+                      <div />
+                    )}
+
+                    <Link href={`/case?id=${report.id}`}>
+                      <Button variant="outline" size="sm">
+                        <Eye className="w-4 h-4 mr-1" />
+                        Подробнее
+                      </Button>
+                    </Link>
+                  </div>
                 </CardContent>
               </Card>
             ))}

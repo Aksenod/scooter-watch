@@ -21,6 +21,7 @@ export default function RecordPage() {
   const [isUploading, setIsUploading] = useState(false)
   const [isClassifying, setIsClassifying] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Проверка авторизации при загрузке страницы
@@ -41,6 +42,7 @@ export default function RecordPage() {
     const file = e.target.files?.[0] ?? null
     if (!file) return
 
+    setError(null)
     setAiResult(null)
     setPhotoFile(file)
     setPhotoPreviewUrl(URL.createObjectURL(file))
@@ -81,7 +83,7 @@ export default function RecordPage() {
       setAiResult(aiData)
     } catch (error) {
       console.error('Error:', error)
-      alert('Ошибка загрузки. Проверьте подключение к API.')
+      setError('Ошибка загрузки. Проверьте подключение к API.')
     } finally {
       setIsUploading(false)
       setIsClassifying(false)
@@ -89,8 +91,6 @@ export default function RecordPage() {
   }
 
   const submitReport = async () => {
-    // В реальном приложении обновляем статус отчета
-    alert('Отчет успешно отправлен!')
     router.push('/history')
   }
 
@@ -233,6 +233,14 @@ export default function RecordPage() {
             </CardContent>
           </Card>
         )}
+
+        {error ? (
+          <Card className="mb-6">
+            <CardContent className="p-4">
+              <p className="text-sm text-destructive">{error}</p>
+            </CardContent>
+          </Card>
+        ) : null}
       </div>
 
       <BottomNav />

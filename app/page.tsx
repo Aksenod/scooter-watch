@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Camera, Shield, Coins, Users } from 'lucide-react'
+import { Button } from '@/shared/ui'
 
 export default function LandingPage() {
   return (
@@ -19,10 +20,12 @@ export default function LandingPage() {
           
           <Link 
             href="/auth"
-            className="inline-flex items-center px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold text-lg hover:bg-primary/90 transition-colors"
+            className="inline-flex"
           >
-            <Camera className="w-6 h-6 mr-2" />
-            Начать
+            <Button size="lg" className="text-lg">
+              <Camera className="w-6 h-6 mr-2" />
+              Начать
+            </Button>
           </Link>
         </div>
       </section>
@@ -100,10 +103,12 @@ export default function LandingPage() {
           
           <Link 
             href="/auth"
-            className="inline-flex items-center px-8 py-4 bg-background text-foreground rounded-lg font-semibold text-lg hover:bg-background/90 transition-colors"
+            className="inline-flex"
           >
-            <Users className="w-6 h-6 mr-2" />
-            Присоединиться
+            <Button size="lg" variant="secondary" className="text-lg">
+              <Users className="w-6 h-6 mr-2" />
+              Присоединиться
+            </Button>
           </Link>
         </div>
       </section>

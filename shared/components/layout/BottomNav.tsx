@@ -16,7 +16,7 @@ export function BottomNav() {
   ]
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 pb-[env(safe-area-inset-bottom)]">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50 pb-[env(safe-area-inset-bottom)]">
       <div className="mx-auto w-full max-w-md px-2 py-2">
         <div className="grid grid-cols-4 gap-1">
           {navItems.map(({ href, label, icon: Icon }) => (
@@ -26,8 +26,8 @@ export function BottomNav() {
               className={cn(
                 "flex flex-col items-center justify-center py-2 px-2 rounded-lg transition-colors",
                 pathname === href
-                  ? "text-blue-700 bg-blue-50"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                  ? "text-foreground bg-surface-2"
+                  : "text-muted-foreground hover:text-foreground hover:bg-surface"
               )}
             >
               <Icon className="w-6 h-6 mb-1" />
