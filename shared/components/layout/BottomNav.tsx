@@ -25,8 +25,8 @@ export function BottomNav() {
             className={cn(
               "flex flex-col items-center justify-center min-w-[64px] py-2 px-3 rounded-lg transition-colors",
               pathname === href
-                ? "text-blue-600"
-                : "text-gray-500 hover:text-gray-700"
+                ? "text-blue-700 bg-blue-50"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
             )}
           >
             <Icon className="w-6 h-6 mb-1" />

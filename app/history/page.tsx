@@ -158,22 +158,23 @@ export default function HistoryPage() {
                     </Badge>
                   </div>
 
-                  {report.rewardAmount && (
-                    <div className="flex items-center justify-between pt-3 border-t">
+                  <div className="flex items-center justify-between pt-3 border-t">
+                    {typeof report.rewardAmount === 'number' ? (
                       <div className="flex items-center text-green-600">
                         <TrendingUp className="w-4 h-4 mr-1" />
-                        <span className="font-medium">
-                          +{report.rewardAmount} ₽
-                        </span>
+                        <span className="font-medium">+{report.rewardAmount} ₽</span>
                       </div>
-                      <Link href={`/case?id=${report.id}`}>
-                        <Button variant="outline" size="sm">
-                          <Eye className="w-4 h-4 mr-1" />
-                          Подробнее
-                        </Button>
-                      </Link>
-                    </div>
-                  )}
+                    ) : (
+                      <div />
+                    )}
+
+                    <Link href={`/case?id=${report.id}`}>
+                      <Button variant="outline" size="sm">
+                        <Eye className="w-4 h-4 mr-1" />
+                        Подробнее
+                      </Button>
+                    </Link>
+                  </div>
                 </CardContent>
               </Card>
             ))}

@@ -11,14 +11,16 @@ export default function AuthPage() {
   const [step, setStep] = useState<'consent' | 'phone'>('consent')
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleConsent = () => {
     setStep('phone')
   }
 
   const handleLogin = async () => {
+    setError(null)
     if (!phone || phone.trim().length < 10) {
-      alert('Введите корректный номер телефона')
+      setError('Введите корректный номер телефона')
       return
     }
 
@@ -46,7 +48,7 @@ export default function AuthPage() {
       router.push('/record')
     } catch (error) {
       console.error('Error:', error)
-      alert('Ошибка входа. Попробуйте снова.')
+      setError('Ошибка входа. Попробуйте снова.')
     } finally {
       setLoading(false)
     }
@@ -112,13 +114,19 @@ export default function AuthPage() {
                 type="tel"
                 placeholder="+79991234567"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => {
+                  setPhone(e.target.value)
+                  if (error) setError(null)
+                }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && phone && !loading) {
                     handleLogin()
                   }
                 }}
               />
+              {error && (
+                <p className="text-xs text-red-600 mt-1">{error}</p>
+              )}
               <p className="text-xs text-gray-500 mt-1">
                 Демо версия: вход без SMS кода
               </p>
