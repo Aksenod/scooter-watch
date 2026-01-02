@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft, Shield } from 'lucide-react'
 
 export default function AuthPage() {
+  const router = useRouter()
   const [step, setStep] = useState<'consent' | 'phone'>('consent')
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
@@ -42,8 +44,8 @@ export default function AuthPage() {
       localStorage.setItem('auth_token', userId)
       localStorage.setItem('auth_user', JSON.stringify(user))
 
-      // Редирект на главную страницу
-      window.location.href = '/record'
+      // Редирект на страницу записи
+      router.push('/record')
     } catch (error) {
       console.error('Error:', error)
       alert('Ошибка входа. Попробуйте снова.')
@@ -75,11 +77,11 @@ export default function AuthPage() {
                   <li>С условиями использования</li>
                 </ul>
               </div>
-
+              
               <Button onClick={handleConsent} className="w-full">
                 Продолжить
               </Button>
-
+              
               <Link href="/" className="block">
                 <Button variant="outline" className="w-full">
                   <ArrowLeft className="w-4 h-4 mr-2" />
