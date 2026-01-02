@@ -35,11 +35,9 @@ jobs:
           static_site_generator: next
 
       - name: Install dependencies
-        working-directory: ./scooter-watch
         run: npm ci
 
       - name: Build with Next.js (static export for GitHub Pages)
-        working-directory: ./scooter-watch
         run: |
           # Временно добавляем output: 'export' для GitHub Pages
           cat > next.config.pages.js << 'EOF'
@@ -66,7 +64,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./scooter-watch/out
+          path: ./out
 
   deploy:
     environment:
