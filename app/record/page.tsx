@@ -24,6 +24,12 @@ const VIOLATION_OPTIONS: Array<{ value: string; label: string }> = [
   { value: 'other', label: 'Другое' },
 ]
 
+function isStaticHosting() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
+  return typeof window !== 'undefined' &&
+    (window.location.hostname.includes('github.io') || !apiUrl || apiUrl === '')
+}
+
 export default function RecordPage() {
   const router = useRouter()
   const [photoFile, setPhotoFile] = useState<File | null>(null)
@@ -82,7 +88,6 @@ export default function RecordPage() {
       await new Promise(resolve => setTimeout(resolve, 800))
 
       const mockPhotoUrl = `https://mock-storage.com/photo_${Date.now()}.jpg`
-      setUploadedEvidenceUrl(mockPhotoUrl)
 
       setIsClassifying(true)
       const reader = new FileReader()
@@ -91,6 +96,8 @@ export default function RecordPage() {
         reader.onload = () => resolve(reader.result as string)
         reader.readAsDataURL(photoFile)
       })
+
+      setUploadedEvidenceUrl(isStaticHosting() ? imageData : mockPhotoUrl)
 
       const aiData = await apiService.classifyReport(imageData)
 

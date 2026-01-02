@@ -108,6 +108,16 @@ function safeParseJson<T>(value: string | null): T | null {
   }
 }
 
+function normalizeDemoEvidenceUrl(url: string, reportId: string) {
+  if (typeof url !== 'string') return url
+  if (url.startsWith('data:image/')) return url
+  if (url.startsWith('blob:')) return url
+  if (url.includes('mock-storage.com')) {
+    return `https://placehold.co/1200x900/png?text=Report%20${encodeURIComponent(reportId)}`
+  }
+  return url
+}
+
 function seedDemoReports(): DemoReport[] {
   return [
     {
@@ -120,7 +130,7 @@ function seedDemoReports(): DemoReport[] {
       latitude: 55.7558,
       longitude: 37.6173,
       evidence: [
-        { id: 'evidence_1', type: 'photo', url: 'https://mock-storage.com/photo_1.jpg' },
+        { id: 'evidence_1', type: 'photo', url: 'https://placehold.co/1200x900/png?text=Report%201' },
       ],
     },
     {
@@ -132,7 +142,7 @@ function seedDemoReports(): DemoReport[] {
       latitude: 55.7558,
       longitude: 37.6173,
       evidence: [
-        { id: 'evidence_2', type: 'photo', url: 'https://mock-storage.com/photo_2.jpg' },
+        { id: 'evidence_2', type: 'photo', url: 'https://placehold.co/1200x900/png?text=Report%202' },
       ],
       __demoFinalStatus: 'fineissued',
       __demoFinalAt: Date.now() - 60 * 1000,
@@ -146,7 +156,7 @@ function seedDemoReports(): DemoReport[] {
       latitude: 55.7558,
       longitude: 37.6173,
       evidence: [
-        { id: 'evidence_3', type: 'photo', url: 'https://mock-storage.com/photo_3.jpg' },
+        { id: 'evidence_3', type: 'photo', url: 'https://placehold.co/1200x900/png?text=Report%203' },
       ],
     },
   ]
@@ -181,7 +191,16 @@ function seedDemoWallet(): DemoWallet {
 function loadDemoReports(): DemoReport[] {
   if (typeof window === 'undefined') return seedDemoReports()
   const existing = safeParseJson<DemoReport[]>(window.localStorage.getItem(getDemoReportsKey()))
-  if (existing && Array.isArray(existing)) return existing
+  if (existing && Array.isArray(existing)) {
+    const normalized = existing.map((r) => ({
+      ...r,
+      evidence: Array.isArray(r.evidence)
+        ? r.evidence.map((e) => ({ ...e, url: normalizeDemoEvidenceUrl(e.url, r.id) }))
+        : [],
+    }))
+    window.localStorage.setItem(getDemoReportsKey(), JSON.stringify(normalized))
+    return normalized
+  }
   const seeded = seedDemoReports()
   window.localStorage.setItem(getDemoReportsKey(), JSON.stringify(seeded))
   return seeded
