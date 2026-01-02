@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Badge, Button } from '@/shared/ui'
@@ -24,7 +24,7 @@ const filters = [
   { key: 'rejected', label: 'Отклонено' },
 ] as const
 
-export default function HistoryPage() {
+function HistoryPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [reports, setReports] = useState<Report[]>([])
@@ -220,5 +220,22 @@ export default function HistoryPage() {
 
       <BottomNav />
     </div>
+  )
+}
+
+export default function HistoryPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-background to-surface/30 pb-28">
+        <div className="max-w-md mx-auto p-4">
+          <div className="flex items-center justify-center gap-3 py-20">
+            <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+            <span className="text-muted-foreground font-medium">Загрузка...</span>
+          </div>
+        </div>
+      </div>
+    }>
+      <HistoryPageContent />
+    </Suspense>
   )
 }
