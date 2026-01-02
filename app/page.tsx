@@ -264,38 +264,10 @@ export default function LandingPage() {
               <div className="text-right">
                 <div className="text-sm text-primary-foreground/70">Ожидается</div>
                 <div className="mt-1 text-xl font-semibold tabular-nums">+{pendingSum.toLocaleString('ru-RU')} ₽</div>
-                <Link href="/wallet" className="mt-3 inline-flex">
-                  <Button variant="secondary" size="sm">
-                    К кошельку
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
               </div>
             </div>
           </CardContent>
         </Card>
-
-        <div className="grid grid-cols-3 gap-2">
-          <Link href="/history" className="block">
-            <Button variant="outline" className="w-full justify-between">
-              <span className="inline-flex items-center">
-                <History className="w-4 h-4 mr-2" />
-                История
-              </span>
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
-          <Link href="/wallet" className="block">
-            <Button variant="outline" className="w-full justify-between">
-              <span className="inline-flex items-center">
-                <Wallet className="w-4 h-4 mr-2" />
-                Кошелёк
-              </span>
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
-          <div className="block" />
-        </div>
 
         <Card>
           <CardHeader>
@@ -325,7 +297,12 @@ export default function LandingPage() {
                       <div className="min-w-0">
                         <div className="truncate text-sm font-semibold">Отчёт #{r.id.slice(-6)}</div>
                         <div className="mt-1 text-xs text-muted-foreground">
-                          {new Date(r.createdAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
+                          {new Date(r.createdAt).toLocaleDateString('ru-RU', {
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">

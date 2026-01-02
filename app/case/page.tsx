@@ -129,7 +129,12 @@ function CaseContent() {
           <CardContent className="space-y-3">
             <div className="flex items-center text-sm text-muted-foreground">
               <Calendar className="w-4 h-4 mr-2" />
-              {new Date(report.createdAt).toLocaleString('ru-RU')}
+              {new Date(report.createdAt).toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
             </div>
             <div className="flex items-center text-sm text-muted-foreground">
               <MapPin className="w-4 h-4 mr-2" />

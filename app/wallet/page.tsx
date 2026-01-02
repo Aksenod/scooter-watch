@@ -185,6 +185,7 @@ export default function WalletPage() {
               onClick={handleWithdraw}
               className="w-full bg-background text-foreground hover:bg-surface"
               disabled={!wallet || wallet.balance < 500}
+              title={!wallet || wallet.balance < 500 ? 'Минимум 500 ₽ для вывода' : undefined}
             >
               Вывести средства
               <ArrowRight className="w-4 h-4 ml-2" />
@@ -201,60 +202,27 @@ export default function WalletPage() {
         </Card>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="w-12 h-12 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-2">
-                <TrendingUp className="w-6 h-6 text-foreground" />
-              </div>
-              <p className="text-2xl font-bold">
-                {pendingRewards.filter(r => r.status === 'paid').reduce((sum, r) => sum + r.amount, 0)} ₽
-              </p>
-              <p className="text-sm text-muted-foreground">Выплачено</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="w-12 h-12 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Clock className="w-6 h-6 text-foreground" />
-              </div>
-              <p className="text-2xl font-bold">
-                {pendingRewards.filter(r => r.status === 'pending').reduce((sum, r) => sum + r.amount, 0)} ₽
-              </p>
-              <p className="text-sm text-muted-foreground">Ожидает</p>
-            </CardContent>
-          </Card>
-        </div>
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="rounded-lg bg-surface px-4 py-4 text-center">
+            <div className="w-12 h-12 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-2">
+              <TrendingUp className="w-6 h-6 text-foreground" />
+            </div>
+            <p className="text-2xl font-bold tabular-nums">
+              {pendingRewards.filter(r => r.status === 'paid').reduce((sum, r) => sum + r.amount, 0)} ₽
+            </p>
+            <p className="text-sm text-muted-foreground">Выплачено</p>
+          </div>
 
-        {/* Pending Rewards */}
-        {pendingRewards.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>История вознаграждений</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {pendingRewards.map((reward) => (
-                  <div key={reward.id} className="flex items-center justify-between p-3 bg-surface rounded-lg">
-                    <div>
-                      <p className="font-medium">Отчет #{reward.reportId.slice(-6)}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {new Date(reward.createdAt).toLocaleDateString('ru-RU')}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold">+{reward.amount} ₽</p>
-                      <Badge variant={getRewardStatusVariant(reward.status) as any}>
-                        {getRewardStatusText(reward.status)}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+          <div className="rounded-lg bg-surface px-4 py-4 text-center">
+            <div className="w-12 h-12 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Clock className="w-6 h-6 text-foreground" />
+            </div>
+            <p className="text-2xl font-bold tabular-nums">
+              {pendingRewards.filter(r => r.status === 'pending').reduce((sum, r) => sum + r.amount, 0)} ₽
+            </p>
+            <p className="text-sm text-muted-foreground">Ожидает</p>
+          </div>
+        </div>
 
         {payoutRequests.length > 0 && (
           <Card className="mt-6">
@@ -307,7 +275,7 @@ export default function WalletPage() {
               <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-4">
                 <WalletIcon className="w-8 h-8 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Нет вознаграждений</h3>
+              <h3 className="text-lg font-semibold mb-2">Пока нет операций</h3>
               <p className="text-muted-foreground mb-4">
                 Создавайте отчеты и получайте вознаграждения за подтвержденные нарушения
               </p>

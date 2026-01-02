@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '@/shared/ui'
-import { Eye, Calendar, MapPin, TrendingUp } from 'lucide-react'
+import { Calendar, MapPin, TrendingUp } from 'lucide-react'
 import { BottomNav } from '@/shared/components/layout'
 
 interface Report {
@@ -20,6 +20,7 @@ export default function HistoryPage() {
   const [reports, setReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  const [filter, setFilter] = useState<'all' | 'submitted' | 'underreview' | 'fineissued' | 'rejected'>('all')
 
   // Проверка авторизации
   useEffect(() => {
@@ -43,6 +44,11 @@ export default function HistoryPage() {
       setLoading(false)
     }
   }
+
+  const filteredReports = useMemo(() => {
+    if (filter === 'all') return reports
+    return reports.filter((r) => r.status === filter)
+  }, [reports, filter])
 
   const getStatusVariant = (status: string) => {
     switch (status) {
@@ -113,7 +119,25 @@ export default function HistoryPage() {
           </div>
         </div>
 
-        {reports.length === 0 ? (
+        <div className="flex flex-wrap gap-2 mb-4">
+          <Button size="sm" variant={filter === 'all' ? 'secondary' : 'outline'} onClick={() => setFilter('all')}>
+            Все
+          </Button>
+          <Button size="sm" variant={filter === 'fineissued' ? 'secondary' : 'outline'} onClick={() => setFilter('fineissued')}>
+            Выплачено
+          </Button>
+          <Button size="sm" variant={filter === 'underreview' ? 'secondary' : 'outline'} onClick={() => setFilter('underreview')}>
+            На проверке
+          </Button>
+          <Button size="sm" variant={filter === 'submitted' ? 'secondary' : 'outline'} onClick={() => setFilter('submitted')}>
+            Отправлено
+          </Button>
+          <Button size="sm" variant={filter === 'rejected' ? 'secondary' : 'outline'} onClick={() => setFilter('rejected')}>
+            Отклонено
+          </Button>
+        </div>
+
+        {filteredReports.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center">
               <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -121,62 +145,58 @@ export default function HistoryPage() {
               </div>
               <h3 className="text-lg font-semibold mb-2">Нет отчетов</h3>
               <p className="text-muted-foreground mb-4">
-                Вы еще не создали ни одного отчета
+                {reports.length === 0 ? 'Вы еще не создали ни одного отчета' : 'По выбранному фильтру ничего не найдено'}
               </p>
-              <Link href="/record">
-                <Button>Создать первый отчет</Button>
-              </Link>
+              {reports.length === 0 ? (
+                <Link href="/record">
+                  <Button>Создать первый отчет</Button>
+                </Link>
+              ) : (
+                <Button variant="outline" onClick={() => setFilter('all')}>Сбросить фильтр</Button>
+              )}
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-4">
-            {reports.map((report) => (
-              <Card key={report.id} className="transition-colors hover:bg-surface">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <h3 className="font-semibold capitalize mb-1">
-                        {getViolationTypeText(report.violationType)}
-                      </h3>
-                      <div className="flex items-center text-sm text-muted-foreground mb-2">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        {new Date(report.createdAt).toLocaleDateString('ru-RU', {
-                          day: 'numeric',
-                          month: 'short',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
+            {filteredReports.map((report) => (
+              <Link key={report.id} href={`/case?id=${report.id}`} className="block">
+                <Card className="transition-colors hover:bg-surface">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-semibold capitalize mb-1 truncate">
+                          {getViolationTypeText(report.violationType)}
+                        </h3>
+                        <div className="flex items-center text-sm text-muted-foreground mb-2">
+                          <Calendar className="w-4 h-4 mr-1" />
+                          {new Date(report.createdAt).toLocaleDateString('ru-RU', {
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </div>
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          Москва, Россия
+                        </div>
                       </div>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        Москва, Россия
+
+                      <div className="flex flex-col items-end gap-2">
+                        <Badge variant={getStatusVariant(report.status) as any}>
+                          {getStatusText(report.status)}
+                        </Badge>
+                        {typeof report.rewardAmount === 'number' ? (
+                          <div className="flex items-center text-success text-sm font-medium">
+                            <TrendingUp className="w-4 h-4 mr-1" />
+                            +{report.rewardAmount} ₽
+                          </div>
+                        ) : null}
                       </div>
                     </div>
-
-                    <Badge variant={getStatusVariant(report.status) as any}>
-                      {getStatusText(report.status)}
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 border-t">
-                    {typeof report.rewardAmount === 'number' ? (
-                      <div className="flex items-center text-success">
-                        <TrendingUp className="w-4 h-4 mr-1" />
-                        <span className="font-medium">+{report.rewardAmount} ₽</span>
-                      </div>
-                    ) : (
-                      <div />
-                    )}
-
-                    <Link href={`/case?id=${report.id}`}>
-                      <Button variant="outline" size="sm">
-                        <Eye className="w-4 h-4 mr-1" />
-                        Подробнее
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         )}
