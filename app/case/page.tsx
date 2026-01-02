@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -17,18 +18,30 @@ interface ReportDetail {
   createdAt: string
   latitude?: number
   longitude?: number
-  evidence: { id: string; type: 'video' | 'photo'; url: string }[]
+  evidence?: { id: string; type: 'video' | 'photo'; url: string }[]
 }
 
 function CaseContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const id = searchParams.get('id')
 
   const [report, setReport] = useState<ReportDetail | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+
+  // Проверка авторизации
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+    if (!token) {
+      router.push('/auth')
+    } else {
+      setIsAuthenticated(true)
+    }
+  }, [router])
 
   useEffect(() => {
-    if (!id) {
+    if (!isAuthenticated || !id) {
       setLoading(false)
       return
     }
@@ -43,7 +56,7 @@ function CaseContent() {
         setLoading(false)
       }
     })()
-  }, [id])
+  }, [id, isAuthenticated])
 
   const getStatusText = (status: string) => {
     switch (status) {
@@ -60,7 +73,8 @@ function CaseContent() {
     }
   }
 
-  if (loading) {
+  // Показываем загрузку пока проверяем авторизацию
+  if (isAuthenticated === null || loading) {
     return (
       <div className="min-h-screen bg-gray-50 pb-20">
         <div className="max-w-4xl mx-auto p-4">
@@ -92,7 +106,7 @@ function CaseContent() {
     )
   }
 
-  const photoEvidence = report.evidence.find((e) => e.type === 'photo')
+  const photoEvidence = report.evidence?.find((e) => e.type === 'photo')
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
