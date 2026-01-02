@@ -6,7 +6,6 @@ on:
       - main
       - master
     paths:
-      - 'prisma/schema.prisma'
       - 'scooter-watch/prisma/schema.prisma'
   workflow_dispatch:
 
@@ -25,12 +24,15 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm install
+        working-directory: ./scooter-watch
+        run: npm ci
 
       - name: Prisma generate
+        working-directory: ./scooter-watch
         run: npx prisma generate
 
       - name: Prisma db push
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        working-directory: ./scooter-watch
         run: npx prisma db push
