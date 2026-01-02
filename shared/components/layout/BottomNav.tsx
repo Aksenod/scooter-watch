@@ -34,7 +34,7 @@ export function BottomNav() {
                   aria-current={isActive ? 'page' : undefined}
                   aria-label={label}
                   className={cn(
-                    "relative flex flex-col items-center justify-center min-h-12 py-1.5 px-1 rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    "relative flex flex-col items-center justify-center min-h-14 py-2 px-1 rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     isRecord
                       ? "text-foreground"
                       : isActive
@@ -42,15 +42,10 @@ export function BottomNav() {
                         : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  {/* Active indicator with gradient background */}
-                  {isActive && !isRecord && (
-                    <div className="absolute inset-0 bg-gradient-to-b from-primary/15 to-primary/8 rounded-xl border border-primary/20" />
-                  )}
-                  
                   {isRecord ? (
                     <div
                       className={cn(
-                        "relative h-10 w-10 rounded-xl shadow-lg flex items-center justify-center transition-all duration-200",
+                        "relative h-11 w-11 rounded-xl shadow-lg flex items-center justify-center transition-all duration-200",
                         isRecordActive
                           ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground scale-105"
                           : "bg-gradient-to-br from-foreground to-foreground/90 text-background hover:scale-105"
@@ -64,28 +59,26 @@ export function BottomNav() {
                       )} />
                     </div>
                   ) : (
-                    <div className={cn(
-                      "relative w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200",
-                      isActive && "bg-primary/10 border border-primary/30"
-                    )}>
-                      <Icon className={cn(
-                        "w-5 h-5 transition-all duration-200", 
-                        isActive && "scale-110 text-primary"
+                    <>
+                      <div className={cn(
+                        "relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200",
+                        isActive 
+                          ? "bg-primary text-primary-foreground shadow-md shadow-primary/30" 
+                          : "hover:bg-surface-2"
+                      )}>
+                        <Icon className={cn(
+                          "w-5 h-5 transition-all duration-200", 
+                          isActive && "scale-110"
+                        )} />
+                      </div>
+                      
+                      {/* Active dot indicator */}
+                      <div className={cn(
+                        "w-1 h-1 rounded-full mt-1 transition-all duration-200",
+                        isActive ? "bg-primary opacity-100" : "opacity-0"
                       )} />
-                      {/* Subtle glow for active items */}
-                      {isActive && (
-                        <div className="absolute inset-0 rounded-lg bg-primary/20 blur-sm -z-10" />
-                      )}
-                    </div>
+                    </>
                   )}
-                  
-                  {/* Text label - show for active items */}
-                  <span className={cn(
-                    "text-xs font-medium transition-all duration-200 mt-0.5",
-                    isActive ? "text-primary opacity-100" : "text-muted-foreground opacity-0"
-                  )}>
-                    {label}
-                  </span>
                   
                   <span className="sr-only">{label}</span>
                 </Link>
