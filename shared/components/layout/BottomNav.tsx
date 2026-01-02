@@ -26,8 +26,6 @@ export function BottomNav() {
     { href: '/wallet', label: 'Кошелек', icon: Wallet },
   ]
 
-  const isRecordActive = activeHref === '/record'
-
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
       <div className="mx-auto w-full max-w-lg px-3 pb-[calc(env(safe-area-inset-bottom)+0.5rem)]">
@@ -36,7 +34,6 @@ export function BottomNav() {
           <div className="grid grid-cols-4 gap-1">
             {navItems.map(({ href, label, icon: Icon }) => {
               const isActive = activeHref === href
-              const isRecord = href === '/record'
               
               return (
                 <Link
@@ -46,50 +43,30 @@ export function BottomNav() {
                   aria-label={label}
                   className={cn(
                     "relative flex flex-col items-center justify-center min-h-14 py-2 px-1 rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    isRecord
-                      ? "text-foreground"
-                      : isActive
-                        ? "text-primary"
-                        : "text-muted-foreground hover:text-foreground"
+                    isActive
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  {isRecord ? (
-                    <div
-                      className={cn(
-                        "relative h-11 w-11 rounded-xl shadow-lg flex items-center justify-center transition-all duration-200",
-                        isRecordActive
-                          ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground scale-105"
-                          : "bg-gradient-to-br from-foreground to-foreground/90 text-background hover:scale-105"
-                      )}
-                    >
-                      <Icon className="w-5 h-5" />
-                      {/* Glow effect */}
-                      <div className={cn(
-                        "absolute inset-0 rounded-xl blur-md -z-10 transition-opacity",
-                        isRecordActive ? "bg-primary/40 opacity-100" : "bg-foreground/20 opacity-0"
+                  <>
+                    <div className={cn(
+                      "relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200",
+                      isActive
+                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
+                        : "hover:bg-surface-2"
+                    )}>
+                      <Icon className={cn(
+                        "w-5 h-5 transition-all duration-200",
+                        isActive && "scale-110"
                       )} />
                     </div>
-                  ) : (
-                    <>
-                      <div className={cn(
-                        "relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200",
-                        isActive 
-                          ? "bg-primary text-primary-foreground shadow-md shadow-primary/30" 
-                          : "hover:bg-surface-2"
-                      )}>
-                        <Icon className={cn(
-                          "w-5 h-5 transition-all duration-200", 
-                          isActive && "scale-110"
-                        )} />
-                      </div>
-                      
-                      {/* Active dot indicator */}
-                      <div className={cn(
-                        "w-1 h-1 rounded-full mt-1 transition-all duration-200",
-                        isActive ? "bg-primary opacity-100" : "opacity-0"
-                      )} />
-                    </>
-                  )}
+
+                    {/* Active dot indicator */}
+                    <div className={cn(
+                      "w-1 h-1 rounded-full mt-1 transition-all duration-200",
+                      isActive ? "bg-primary opacity-100" : "opacity-0"
+                    )} />
+                  </>
                   
                   <span className="sr-only">{label}</span>
                 </Link>
