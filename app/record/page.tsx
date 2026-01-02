@@ -104,36 +104,6 @@ export default function RecordPage() {
           <h1 className="text-2xl font-bold mt-1">Снять нарушение</h1>
         </div>
 
-        {/* Tips Card */}
-        <div className="rounded-2xl border border-border bg-card p-4">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-warning/20 to-warning/5 flex items-center justify-center">
-              <Lightbulb className="w-4 h-4 text-warning" />
-            </div>
-            <h2 className="font-semibold text-sm">Советы для успеха</h2>
-          </div>
-          <div className="space-y-2 text-sm text-muted-foreground">
-            <div className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0 mt-0.5">1</span>
-              <span>Захватите нарушение и контекст (тротуар/дорога)</span>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0 mt-0.5">2</span>
-              <span>Держите кадр ровно и без зума</span>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0 mt-0.5">3</span>
-              <span>Не снимайте лица крупным планом</span>
-            </div>
-          </div>
-          <Link href="/tips" className="block mt-3">
-            <Button variant="outline" size="sm" className="w-full">
-              Все советы
-              <ArrowRight className="w-3.5 h-3.5 ml-2" />
-            </Button>
-          </Link>
-        </div>
-
         <input
           ref={fileInputRef}
           type="file"
@@ -193,6 +163,36 @@ export default function RecordPage() {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Tips Card */}
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-warning/20 to-warning/5 flex items-center justify-center">
+              <Lightbulb className="w-4 h-4 text-warning" />
+            </div>
+            <h2 className="font-semibold text-sm">Советы для успеха</h2>
+          </div>
+          <div className="space-y-2 text-sm text-muted-foreground">
+            <div className="flex items-start gap-2">
+              <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0 mt-0.5">1</span>
+              <span>Захватите нарушение и контекст (тротуар/дорога)</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0 mt-0.5">2</span>
+              <span>Держите кадр ровно и без зума</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0 mt-0.5">3</span>
+              <span>Не снимайте лица крупным планом</span>
+            </div>
+          </div>
+          <Link href="/tips" className="block mt-3">
+            <Button variant="outline" size="sm" className="w-full">
+              Все советы
+              <ArrowRight className="w-3.5 h-3.5 ml-2" />
+            </Button>
+          </Link>
         </div>
 
         {/* AI Result */}
