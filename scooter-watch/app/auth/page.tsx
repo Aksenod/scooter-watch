@@ -3,9 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button, Input, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui'
 import { ArrowLeft, Shield } from 'lucide-react'
 
 export default function AuthPage() {

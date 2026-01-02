@@ -1,5 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, Badge } from '@/shared/ui'
 import { cn } from '@/lib/utils'
 
 type StatusTone = 'warning' | 'success' | 'destructive' | 'secondary'
