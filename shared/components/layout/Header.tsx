@@ -10,24 +10,24 @@ export function Header() {
         <Link href="/" className="text-xl font-bold text-blue-600">
           ScooterWatch
         </Link>
-        
+
         <nav className="flex items-center space-x-6">
-          <Link 
-            href="/record" 
+          <Link
+            href="/record"
             className="flex items-center text-gray-600 hover:text-blue-600"
           >
             <Camera className="w-5 h-5 mr-1" />
             Запись
           </Link>
-          <Link 
-            href="/history" 
+          <Link
+            href="/history"
             className="flex items-center text-gray-600 hover:text-blue-600"
           >
             <History className="w-5 h-5 mr-1" />
             История
           </Link>
-          <Link 
-            href="/wallet" 
+          <Link
+            href="/wallet"
             className="flex items-center text-gray-600 hover:text-blue-600"
           >
             <Wallet className="w-5 h-5 mr-1" />

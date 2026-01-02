@@ -2,15 +2,16 @@
 
 import { type ChangeEvent, useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@/shared/ui'
 import { Upload, CheckCircle, Image as ImageIcon } from 'lucide-react'
-import { BottomNav } from '@/components/layout/BottomNav'
-import { CameraFab } from '@/components/record/CameraFab'
-import { ConfidenceBadge } from '@/components/record/ConfidenceBadge'
-import { ConfidenceMeter } from '@/components/record/ConfidenceMeter'
-import { RewardProgress } from '@/components/record/RewardProgress'
-import { StatusCard } from '@/components/record/StatusCard'
+import { BottomNav } from '@/shared/components/layout'
+import {
+  CameraFab,
+  ConfidenceBadge,
+  ConfidenceMeter,
+  RewardProgress,
+  StatusCard,
+} from '@/features/recording'
 
 export default function RecordPage() {
   const router = useRouter()
