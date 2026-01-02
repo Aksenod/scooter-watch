@@ -8,6 +8,17 @@ import { cn } from '@/lib/utils'
 export function BottomNav() {
   const pathname = usePathname()
 
+  const activeHref = (() => {
+    if (pathname === '/record' || pathname.startsWith('/record/')) return '/record'
+    if (pathname === '/tips' || pathname.startsWith('/tips/')) return '/record'
+    if (pathname === '/history' || pathname.startsWith('/history/') || pathname === '/case' || pathname.startsWith('/case/')) return '/history'
+    if (pathname === '/wallet' || pathname.startsWith('/wallet/')) return '/wallet'
+    if (pathname === '/profile' || pathname.startsWith('/profile/')) return '/'
+    if (pathname === '/referrals' || pathname.startsWith('/referrals/')) return '/'
+    if (pathname === '/support' || pathname.startsWith('/support/')) return '/'
+    return '/'
+  })()
+
   const navItems = [
     { href: '/', label: 'Главная', icon: Home },
     { href: '/record', label: 'Снять', icon: Camera },
@@ -15,7 +26,7 @@ export function BottomNav() {
     { href: '/wallet', label: 'Кошелек', icon: Wallet },
   ]
 
-  const isRecordActive = pathname === '/record'
+  const isRecordActive = activeHref === '/record'
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
@@ -24,7 +35,7 @@ export function BottomNav() {
         <div className="rounded-2xl bg-card/95 supports-[backdrop-filter]:bg-card/80 backdrop-blur-xl border border-border/50 shadow-lg shadow-black/5 p-1">
           <div className="grid grid-cols-4 gap-1">
             {navItems.map(({ href, label, icon: Icon }) => {
-              const isActive = pathname === href
+              const isActive = activeHref === href
               const isRecord = href === '/record'
               
               return (
