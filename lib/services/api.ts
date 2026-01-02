@@ -150,6 +150,7 @@ class ApiService {
       const newReport = {
         id: `report_${Date.now()}`,
         ...data,
+        userCorrected: false,
         status: 'submitted',
         createdAt: new Date().toISOString(),
       };
@@ -159,6 +160,26 @@ class ApiService {
     return this.request('/api/reports', {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  }
+
+  async updateReportViolationType(
+    reportId: string,
+    violationType: string,
+    userCorrected: boolean = true
+  ) {
+    if (isStaticHosting) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const report = mockReports.find(r => r.id === reportId);
+      if (report) {
+        (report as any).violationType = violationType;
+        (report as any).userCorrected = userCorrected;
+      }
+      return { success: true, reportId, violationType, userCorrected };
+    }
+    return this.request(`/api/reports/${reportId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ violationType, userCorrected }),
     });
   }
 
