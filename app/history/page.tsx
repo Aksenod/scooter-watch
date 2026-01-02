@@ -3,11 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '@/shared/ui'
 import { Eye, Calendar, MapPin, TrendingUp } from 'lucide-react'
-import { BottomNav } from '@/components/layout/BottomNav'
+import { BottomNav } from '@/shared/components/layout'
 
 interface Report {
   id: string

@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@/shared/ui'
 
 type ConfidenceBadgeProps = {
   confidence: number
