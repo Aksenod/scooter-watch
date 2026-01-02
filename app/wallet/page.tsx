@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, Button, Badge } from '@/shared/ui'
 import { Wallet as WalletIcon, TrendingUp, Clock, ArrowRight } from 'lucide-react'
@@ -20,10 +21,19 @@ interface Reward {
   createdAt: string
 }
 
+interface PayoutRequest {
+  id: string
+  amount: number
+  status: 'created' | 'processing' | 'paid' | 'rejected'
+  createdAt: string
+  updatedAt: string
+}
+
 export default function WalletPage() {
   const router = useRouter()
   const [wallet, setWallet] = useState<WalletData | null>(null)
   const [pendingRewards, setPendingRewards] = useState<Reward[]>([])
+  const [payoutRequests, setPayoutRequests] = useState<PayoutRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
   const [message, setMessage] = useState<string | null>(null)
@@ -45,6 +55,7 @@ export default function WalletPage() {
       const data = await apiService.getWallet()
       setWallet(data.wallet)
       setPendingRewards(data.pendingRewards || [])
+      setPayoutRequests((data as any).payoutRequests || [])
     } catch (error) {
       console.error('Error:', error)
     } finally {
@@ -59,8 +70,19 @@ export default function WalletPage() {
       return
     }
 
-    // Mock withdrawal - в реальном приложении интегрируем с YooKassa
-    setMessage(`Запрос на вывод ${wallet.balance} ₽ отправлен!`)
+    try {
+      const { apiService } = await import('@/lib/services/api')
+      const res = await apiService.withdraw(wallet.balance)
+      if (res?.success === false) {
+        setMessage(res?.message || 'Не удалось создать запрос на вывод')
+      } else {
+        setMessage(res?.message || `Запрос на вывод ${wallet.balance} ₽ отправлен!`)
+      }
+      await fetchWallet()
+    } catch (error) {
+      console.error('Error:', error)
+      setMessage('Не удалось создать запрос на вывод')
+    }
   }
 
   const getRewardStatusVariant = (status: string) => {
@@ -84,6 +106,36 @@ export default function WalletPage() {
         return 'Подтверждено'
       case 'paid':
         return 'Выплачено'
+      default:
+        return status
+    }
+  }
+
+  const getPayoutStatusVariant = (status: string) => {
+    switch (status) {
+      case 'created':
+        return 'warning'
+      case 'processing':
+        return 'secondary'
+      case 'paid':
+        return 'success'
+      case 'rejected':
+        return 'destructive'
+      default:
+        return 'secondary'
+    }
+  }
+
+  const getPayoutStatusText = (status: string) => {
+    switch (status) {
+      case 'created':
+        return 'Создана'
+      case 'processing':
+        return 'В обработке'
+      case 'paid':
+        return 'Выплачено'
+      case 'rejected':
+        return 'Отклонено'
       default:
         return status
     }
@@ -204,8 +256,52 @@ export default function WalletPage() {
           </Card>
         )}
 
+        {payoutRequests.length > 0 && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>История выводов</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {payoutRequests.map((p) => (
+                  <div key={p.id} className="flex items-center justify-between p-3 bg-surface rounded-lg">
+                    <div>
+                      <p className="font-medium">Вывод #{p.id.slice(-6)}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(p.createdAt).toLocaleDateString('ru-RU')}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold">-{p.amount} ₽</p>
+                      <Badge variant={getPayoutStatusVariant(p.status) as any}>
+                        {getPayoutStatusText(p.status)}
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Нужна помощь?</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Link href="/support">
+              <Button variant="outline" className="w-full">Поддержка и обратная связь</Button>
+            </Link>
+            <div className="mt-3">
+              <Link href="/profile">
+                <Button variant="outline" className="w-full">Профиль и настройки</Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Empty State */}
-        {pendingRewards.length === 0 && (
+        {pendingRewards.length === 0 && payoutRequests.length === 0 && (
           <Card>
             <CardContent className="p-8 text-center">
               <div className="w-16 h-16 bg-surface-2 rounded-full flex items-center justify-center mx-auto mb-4">

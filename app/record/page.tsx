@@ -2,6 +2,7 @@
 
 import { type ChangeEvent, useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/shared/ui'
 import { Upload, CheckCircle, Image as ImageIcon } from 'lucide-react'
 import { BottomNav } from '@/shared/components/layout'
@@ -114,6 +115,20 @@ export default function RecordPage() {
         </div>
 
         <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Советы по съёмке</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <div>Старайся захватить нарушение и контекст (тротуар/дорога)</div>
+            <div>Держи кадр ровно и без зума</div>
+            <div>Не снимай лица крупным планом</div>
+            <Link href="/tips" className="block pt-2">
+              <Button variant="outline" className="w-full">Подробнее</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className="mb-6">
           <CardContent className="p-4">
             <RewardProgress current={420} target={1000} />
           </CardContent>
@@ -190,18 +205,6 @@ export default function RecordPage() {
             </CardContent>
           </Card>
         )}
-
-        {aiResult ? (
-          <div className="mb-6">
-            <StatusCard
-              title="🚫 Парковка на тротуаре"
-              statusLabel="На модерации"
-              statusTone="warning"
-              rewardLabel="₽200"
-              timeLabel="2 дня назад"
-            />
-          </div>
-        ) : null}
 
         {/* Upload Progress */}
         {isUploading && (

@@ -1,17 +1,27 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button, Input, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui'
 import { ArrowLeft, Shield } from 'lucide-react'
 
 export default function AuthPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [step, setStep] = useState<'consent' | 'phone'>('consent')
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [refInfo, setRefInfo] = useState<string | null>(null)
+
+  useEffect(() => {
+    const ref = searchParams.get('ref')
+    if (ref && typeof window !== 'undefined') {
+      localStorage.setItem('scooter_watch_pending_referrer', ref)
+      setRefInfo(ref)
+    }
+  }, [searchParams])
 
   const handleConsent = () => {
     setStep('phone')
@@ -43,6 +53,13 @@ export default function AuthPage() {
       // Сохраняем в localStorage
       localStorage.setItem('auth_token', userId)
       localStorage.setItem('auth_user', JSON.stringify(user))
+
+      try {
+        const { apiService } = await import('@/lib/services/api')
+        await apiService.applyPendingReferral()
+      } catch {
+        // ignore
+      }
 
       // Редирект на страницу записи
       router.push('/record')
@@ -106,6 +123,11 @@ export default function AuthPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {refInfo ? (
+              <div className="text-xs text-muted-foreground bg-surface rounded-md p-3">
+                Реферальное приглашение сохранено. После входа бонус будет начислен пригласившему.
+              </div>
+            ) : null}
             <div>
               <label className="block text-sm font-medium mb-2">
                 Номер телефона

@@ -294,15 +294,7 @@ export default function LandingPage() {
               <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
-          <Link href="/record" className="block">
-            <Button variant="outline" className="w-full justify-between">
-              <span className="inline-flex items-center">
-                <Camera className="w-4 h-4 mr-2" />
-                Снять
-              </span>
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
+          <div className="block" />
         </div>
 
         <Card>
@@ -360,10 +352,26 @@ export default function LandingPage() {
           <CardHeader>
             <CardTitle className="text-lg">Как получать больше</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <div>Снимайте номер самоката и контекст нарушения в одном кадре.</div>
-            <div>Делайте фото/видео при хорошем освещении, без сильного размытия.</div>
-            <div>Если видите отклонения — проверьте, что локация и время считываются корректно.</div>
+          <CardContent className="space-y-4 text-sm">
+            <div className="space-y-2">
+              <div className="font-medium text-foreground">1) Дайте модерации “доказательства”</div>
+              <div className="text-muted-foreground">Покажите нарушение + контекст (тротуар/дорога/переход) в одном кадре. Если есть номер/бренд самоката — добавьте в кадр.</div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="font-medium text-foreground">2) Сделайте кадр читаемым</div>
+              <div className="text-muted-foreground">Снимайте при хорошем свете, держите телефон ровно. Избегайте сильного зума и тряски — это снижает шанс подтверждения.</div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="font-medium text-foreground">3) Один отчёт — одно нарушение</div>
+              <div className="text-muted-foreground">Не смешивайте разные ситуации в одном отчёте. Так проверка проходит быстрее, а статус меняется предсказуемее.</div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="font-medium text-foreground">4) Приватность и безопасность</div>
+              <div className="text-muted-foreground">Не снимайте лица крупным планом и не вступайте в конфликт. Лучше снять чуть издалека, но чётко.</div>
+            </div>
           </CardContent>
         </Card>
 
