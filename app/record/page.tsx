@@ -11,6 +11,7 @@ import {
   ConfidenceMeter,
   RewardProgress,
   StatusCard,
+  ViolationTypeSelector,
 } from '@/features/recording'
 
 export default function RecordPage() {
@@ -21,7 +22,11 @@ export default function RecordPage() {
   const [isUploading, setIsUploading] = useState(false)
   const [isClassifying, setIsClassifying] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  const [correctedViolationType, setCorrectedViolationType] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Получаем актуальный тип нарушения (скорректированный или от AI)
+  const currentViolationType = correctedViolationType ?? aiResult?.violationType
 
   // Проверка авторизации при загрузке страницы
   useEffect(() => {
@@ -42,6 +47,7 @@ export default function RecordPage() {
     if (!file) return
 
     setAiResult(null)
+    setCorrectedViolationType(null)
     setPhotoFile(file)
     setPhotoPreviewUrl(URL.createObjectURL(file))
   }
@@ -71,14 +77,18 @@ export default function RecordPage() {
       const aiData = await apiService.classifyReport(imageData)
 
       // Создаем отчет с результатами AI
-      await apiService.createReport({
+      const report = await apiService.createReport({
         violationType: aiData.violationType,
         confidence: aiData.confidence,
         coordinates: '55.7558,37.6173',
         evidenceUrl: mockPhotoUrl
-      })
+      }) as { id: string }
 
-      setAiResult(aiData)
+      // Сохраняем результат AI вместе с ID отчета
+      setAiResult({
+        ...aiData,
+        reportId: report.id,
+      })
     } catch (error) {
       console.error('Error:', error)
       alert('Ошибка загрузки. Проверьте подключение к API.')
@@ -89,9 +99,24 @@ export default function RecordPage() {
   }
 
   const submitReport = async () => {
-    // В реальном приложении обновляем статус отчета
-    alert('Отчет успешно отправлен!')
-    router.push('/history')
+    try {
+      const { apiService } = await import('@/lib/services/api')
+
+      // Если пользователь скорректировал тип нарушения - обновляем отчет
+      if (correctedViolationType && correctedViolationType !== aiResult?.violationType) {
+        await apiService.updateReportViolationType(
+          aiResult.reportId,
+          correctedViolationType,
+          true // userCorrected flag
+        )
+      }
+
+      alert('Отчет успешно отправлен!')
+      router.push('/history')
+    } catch (error) {
+      console.error('Error submitting report:', error)
+      alert('Ошибка отправки отчета')
+    }
   }
 
   // Показываем загрузку пока проверяем авторизацию
@@ -171,7 +196,15 @@ export default function RecordPage() {
               <div className="space-y-3">
                 <div>
                   <p className="text-sm text-muted-foreground">Тип нарушения:</p>
-                  <p className="font-semibold capitalize">{aiResult.violationType}</p>
+                  <ViolationTypeSelector
+                    value={currentViolationType}
+                    onChange={setCorrectedViolationType}
+                  />
+                  {correctedViolationType && correctedViolationType !== aiResult.violationType && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Вы изменили решение AI
+                    </p>
+                  )}
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Уверенность AI:</p>

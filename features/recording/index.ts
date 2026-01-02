@@ -9,6 +9,7 @@ export {
   ConfidenceMeter,
   RewardProgress,
   StatusCard,
+  ViolationTypeSelector,
 } from './components'
 
 // Hooks
