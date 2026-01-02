@@ -1,8 +1,12 @@
-'use client'
-
 import Link from 'next/link'
 import { Button, Card, CardContent } from '@/shared/ui'
 import { BottomNav } from '@/shared/components/layout'
+
+export const dynamicParams = false
+
+export function generateStaticParams() {
+  return [{ slug: ['wip'] }] as { slug: string[] }[]
+}
 
 export default function CatchAllStubPage() {
   return (

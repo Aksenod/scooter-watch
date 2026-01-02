@@ -1,14 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button, Input, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui'
 import { ArrowLeft, Shield } from 'lucide-react'
 
 export default function AuthPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [step, setStep] = useState<'consent' | 'phone'>('consent')
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
@@ -16,12 +15,13 @@ export default function AuthPage() {
   const [refInfo, setRefInfo] = useState<string | null>(null)
 
   useEffect(() => {
-    const ref = searchParams.get('ref')
-    if (ref && typeof window !== 'undefined') {
-      localStorage.setItem('scooter_watch_pending_referrer', ref)
-      setRefInfo(ref)
-    }
-  }, [searchParams])
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const ref = params.get('ref')
+    if (!ref) return
+    localStorage.setItem('scooter_watch_pending_referrer', ref)
+    setRefInfo(ref)
+  }, [])
 
   const handleConsent = () => {
     setStep('phone')
