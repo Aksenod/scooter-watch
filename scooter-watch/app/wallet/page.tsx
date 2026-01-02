@@ -2,11 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle, Button, Badge } from '@/shared/ui'
 import { Wallet as WalletIcon, TrendingUp, Clock, ArrowRight } from 'lucide-react'
-import { BottomNav } from '@/components/layout/BottomNav'
+import { BottomNav } from '@/shared/components/layout'
 
 interface WalletData {
   id: string

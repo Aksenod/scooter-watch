@@ -3,11 +3,9 @@
 import { Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '@/shared/ui'
 import { ArrowLeft, Calendar, MapPin, Image as ImageIcon } from 'lucide-react'
-import { BottomNav } from '@/components/layout/BottomNav'
+import { BottomNav } from '@/shared/components/layout'
 
 interface ReportDetail {
   id: string
