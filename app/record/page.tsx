@@ -4,7 +4,7 @@ import { type ChangeEvent, useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/shared/ui'
-import { Upload, CheckCircle, Image as ImageIcon, Camera, Sparkles, ArrowRight, Lightbulb, RotateCcw } from 'lucide-react'
+import { Upload, CheckCircle, Image as ImageIcon, Camera, Sparkles, ArrowRight, Lightbulb, RotateCcw, ChevronDown } from 'lucide-react'
 import { BottomNav } from '@/shared/components/layout'
 import {
   CameraFab,
@@ -22,6 +22,7 @@ export default function RecordPage() {
   const [isClassifying, setIsClassifying] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [tipsOpen, setTipsOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -166,33 +167,49 @@ export default function RecordPage() {
         </div>
 
         {/* Tips Card */}
-        <div className="rounded-2xl border border-border bg-card p-4">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-warning/20 to-warning/5 flex items-center justify-center">
-              <Lightbulb className="w-4 h-4 text-warning" />
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setTipsOpen((v) => !v)}
+            className="w-full p-4 flex items-center justify-between gap-3 text-left hover:bg-surface/30 transition-colors"
+            aria-expanded={tipsOpen}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-warning/20 to-warning/5 flex items-center justify-center">
+                <Lightbulb className="w-4 h-4 text-warning" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-sm">Советы для успеха</h2>
+                <p className="text-xs text-muted-foreground">Как увеличить шанс подтверждения</p>
+              </div>
             </div>
-            <h2 className="font-semibold text-sm">Советы для успеха</h2>
-          </div>
-          <div className="space-y-2 text-sm text-muted-foreground">
-            <div className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0 mt-0.5">1</span>
-              <span>Захватите нарушение и контекст (тротуар/дорога)</span>
+            <ChevronDown className={tipsOpen ? 'w-4 h-4 text-muted-foreground transition-transform rotate-180' : 'w-4 h-4 text-muted-foreground transition-transform'} />
+          </button>
+
+          {tipsOpen ? (
+            <div className="p-4 pt-0">
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0 mt-0.5">1</span>
+                  <span>Захватите нарушение и контекст (тротуар/дорога)</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0 mt-0.5">2</span>
+                  <span>Держите кадр ровно и без зума</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0 mt-0.5">3</span>
+                  <span>Не снимайте лица крупным планом</span>
+                </div>
+              </div>
+              <Link href="/tips" className="block mt-3">
+                <Button variant="outline" size="sm" className="w-full">
+                  Все советы
+                  <ArrowRight className="w-3.5 h-3.5 ml-2" />
+                </Button>
+              </Link>
             </div>
-            <div className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0 mt-0.5">2</span>
-              <span>Держите кадр ровно и без зума</span>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0 mt-0.5">3</span>
-              <span>Не снимайте лица крупным планом</span>
-            </div>
-          </div>
-          <Link href="/tips" className="block mt-3">
-            <Button variant="outline" size="sm" className="w-full">
-              Все советы
-              <ArrowRight className="w-3.5 h-3.5 ml-2" />
-            </Button>
-          </Link>
+          ) : null}
         </div>
 
         {/* AI Result */}
