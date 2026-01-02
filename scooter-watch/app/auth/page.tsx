@@ -44,7 +44,7 @@ export default function AuthPage() {
       localStorage.setItem('auth_token', userId)
       localStorage.setItem('auth_user', JSON.stringify(user))
 
-      // Редирект на главную страницу
+      // Редирект на страницу записи
       router.push('/record')
     } catch (error) {
       console.error('Error:', error)
