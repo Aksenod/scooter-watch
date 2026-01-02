@@ -38,13 +38,13 @@ export function BottomNav() {
                     isRecord
                       ? "text-foreground"
                       : isActive
-                        ? "text-foreground"
+                        ? "text-primary"
                         : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  {/* Active indicator */}
+                  {/* Active indicator with gradient background */}
                   {isActive && !isRecord && (
-                    <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-primary/5 rounded-xl" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-primary/15 to-primary/8 rounded-xl border border-primary/20" />
                   )}
                   
                   {isRecord ? (
@@ -65,12 +65,28 @@ export function BottomNav() {
                     </div>
                   ) : (
                     <div className={cn(
-                      "relative w-9 h-9 rounded-lg flex items-center justify-center transition-all",
-                      isActive && "bg-surface-2"
+                      "relative w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200",
+                      isActive && "bg-primary/10 border border-primary/30"
                     )}>
-                      <Icon className={cn("w-5 h-5 transition-transform", isActive && "scale-110")} />
+                      <Icon className={cn(
+                        "w-5 h-5 transition-all duration-200", 
+                        isActive && "scale-110 text-primary"
+                      )} />
+                      {/* Subtle glow for active items */}
+                      {isActive && (
+                        <div className="absolute inset-0 rounded-lg bg-primary/20 blur-sm -z-10" />
+                      )}
                     </div>
                   )}
+                  
+                  {/* Text label - show for active items */}
+                  <span className={cn(
+                    "text-xs font-medium transition-all duration-200 mt-0.5",
+                    isActive ? "text-primary opacity-100" : "text-muted-foreground opacity-0"
+                  )}>
+                    {label}
+                  </span>
+                  
                   <span className="sr-only">{label}</span>
                 </Link>
               )
