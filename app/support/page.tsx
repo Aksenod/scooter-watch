@@ -23,12 +23,31 @@ export default function SupportPage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [context, setContext] = useState<{ from?: string; reportId?: string; intent?: string }>({})
 
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
     if (!token) {
       router.push('/auth')
       return
+    }
+
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const from = params.get('from') || undefined
+      const reportId = params.get('reportId') || undefined
+      const intent = params.get('intent') || undefined
+      setContext({ from, reportId, intent })
+
+      setSubject((prev) => {
+        if (prev.trim()) return prev
+        if (intent === 'appeal' && reportId) return `Оспорить решение по отчёту #${reportId.slice(-6)}`
+        if (reportId) return `Вопрос по отчёту #${reportId.slice(-6)}`
+        if (intent === 'payout') return 'Вопрос по выплате/выводу'
+        return ''
+      })
+    } catch {
+      setContext({})
     }
     void fetchTickets()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -101,10 +120,26 @@ export default function SupportPage() {
       <div className="max-w-md mx-auto p-4">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Поддержка</h1>
-          <Link href="/wallet">
-            <Button variant="outline" size="sm">К кошельку</Button>
-          </Link>
+          {context.from === 'case' && context.reportId ? (
+            <Link href={`/case?id=${encodeURIComponent(context.reportId)}`}>
+              <Button variant="outline" size="sm">К кейсу</Button>
+            </Link>
+          ) : (
+            <Link href="/">
+              <Button variant="outline" size="sm">На главную</Button>
+            </Link>
+          )}
         </div>
+
+        {context.reportId ? (
+          <Card className="mb-6">
+            <CardContent className="p-4">
+              <p className="text-sm text-muted-foreground">
+                Контекст: отчёт #{context.reportId.slice(-6)}
+              </p>
+            </CardContent>
+          </Card>
+        ) : null}
 
         <Card className="mb-6">
           <CardHeader>

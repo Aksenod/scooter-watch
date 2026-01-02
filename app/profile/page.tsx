@@ -131,9 +131,9 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-background pb-20">
       <div className="max-w-md mx-auto p-4">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">Профиль</h1>
-          <Link href="/wallet">
-            <Button variant="outline" size="sm">К кошельку</Button>
+          <h1 className="text-2xl font-bold">О приложении / Аккаунт</h1>
+          <Link href="/">
+            <Button variant="outline" size="sm">На главную</Button>
           </Link>
         </div>
 

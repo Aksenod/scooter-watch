@@ -257,12 +257,12 @@ export default function WalletPage() {
             <CardTitle>Нужна помощь?</CardTitle>
           </CardHeader>
           <CardContent>
-            <Link href="/support">
-              <Button variant="outline" className="w-full">Поддержка и обратная связь</Button>
+            <Link href="/support?from=wallet&intent=payout">
+              <Button variant="outline" className="w-full">Вопрос по выплатам и выводу</Button>
             </Link>
             <div className="mt-3">
               <Link href="/profile">
-                <Button variant="outline" className="w-full">Профиль и настройки</Button>
+                <Button variant="outline" className="w-full">О приложении и аккаунт</Button>
               </Link>
             </div>
           </CardContent>

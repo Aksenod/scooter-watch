@@ -166,6 +166,24 @@ function CaseContent() {
             )}
           </CardContent>
         </Card>
+
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Поддержка по отчёту</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {report.status === 'rejected' ? (
+              <Link href={`/support?from=case&reportId=${encodeURIComponent(report.id)}&intent=appeal`}>
+                <Button className="w-full">Оспорить решение</Button>
+              </Link>
+            ) : null}
+            <Link href={`/support?from=case&reportId=${encodeURIComponent(report.id)}`}>
+              <Button variant={report.status === 'rejected' ? 'outline' : 'default'} className="w-full">
+                Задать вопрос по отчёту
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
 
       <BottomNav />
