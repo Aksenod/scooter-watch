@@ -60,7 +60,7 @@ export default function AuthPage() {
 
       localStorage.setItem('sw_pwa_install_after_login', '1')
 
-      router.push('/record')
+      router.push('/')
     } catch (e) {
       console.error('Error:', e)
       setError('Ошибка входа. Попробуйте снова.')
@@ -115,7 +115,7 @@ export default function AuthPage() {
       localStorage.setItem('sw_pwa_install_after_login', '1')
 
       // Редирект на страницу записи
-      router.push('/record')
+      router.push('/')
     } catch (error) {
       console.error('Error:', error)
       setError('Ошибка входа. Попробуйте снова.')

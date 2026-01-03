@@ -172,6 +172,7 @@ export default function LandingPage() {
   const [pendingSum, setPendingSum] = useState<number>(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [onboardingDismissed, setOnboardingDismissed] = useState(true)
 
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
@@ -192,6 +193,13 @@ export default function LandingPage() {
       setUserLabel(name || (phone ? `+${phone}` : ''))
     } catch {
       setUserLabel('')
+    }
+
+    try {
+      const key = `sw_dashboard_onboarding_dismissed_${token}`
+      setOnboardingDismissed(localStorage.getItem(key) === '1')
+    } catch {
+      setOnboardingDismissed(true)
     }
 
     ;(async () => {
@@ -254,6 +262,19 @@ export default function LandingPage() {
     }
   }
 
+  const dismissOnboarding = () => {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+      if (token) {
+        const key = `sw_dashboard_onboarding_dismissed_${token}`
+        localStorage.setItem(key, '1')
+      }
+    } catch {
+      // ignore
+    }
+    setOnboardingDismissed(true)
+  }
+
   if (!authChecked) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -285,6 +306,68 @@ export default function LandingPage() {
             </div>
           </Link>
         </div>
+
+        {!loading && reports.length === 0 && !onboardingDismissed ? (
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-base font-semibold">Быстрый старт</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  3 шага до первого вознаграждения
+                </p>
+              </div>
+              <Button variant="outline" size="sm" onClick={dismissOnboarding}>
+                Скрыть
+              </Button>
+            </div>
+
+            <div className="mt-4 space-y-3">
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-surface/50">
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Camera className="w-4 h-4 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Снимите нарушение</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Покажите самокат и контекст (тротуар/дорога)</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-surface/50">
+                <div className="w-9 h-9 rounded-lg bg-warning/15 flex items-center justify-center shrink-0">
+                  <Clock className="w-4 h-4 text-warning" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Отслеживайте статус</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">В истории видно, на каком этапе модерация</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-surface/50">
+                <div className="w-9 h-9 rounded-lg bg-success/15 flex items-center justify-center shrink-0">
+                  <Coins className="w-4 h-4 text-success" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Получайте выплаты</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Когда штраф подтверждён — награда начислится на баланс</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Link href="/record" className="block">
+                <Button className="w-full shadow-lg shadow-primary/20">
+                  Снять первое
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+              <Link href="/tips" className="block">
+                <Button variant="outline" className="w-full">
+                  Советы
+                </Button>
+              </Link>
+            </div>
+          </div>
+        ) : null}
 
         {/* Primary CTA */}
         <Link href="/record" className="block group">
