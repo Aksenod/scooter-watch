@@ -96,6 +96,22 @@ export default function ProfilePage() {
     }
   }
 
+  const setDashboardOnboardingFlags = (opts: { navigateToDashboard?: boolean }) => {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+      if (token) {
+        localStorage.removeItem(`sw_dashboard_onboarding_dismissed_${token}`)
+      }
+      localStorage.setItem('sw_dashboard_onboarding_after_login', '1')
+      setMessage('Онбординг будет показан')
+      if (opts.navigateToDashboard) {
+        router.push('/')
+      }
+    } catch {
+      setError('Не удалось включить онбординг')
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-surface/30 pb-28">
@@ -200,6 +216,22 @@ export default function ProfilePage() {
             <CardTitle className="text-base">Действия</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => setDashboardOnboardingFlags({ navigateToDashboard: false })}
+            >
+              Показать онбординг при входе
+            </Button>
+
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => setDashboardOnboardingFlags({ navigateToDashboard: true })}
+            >
+              Показать онбординг сейчас
+            </Button>
+
             <Link href="/referrals">
               <Button variant="outline" className="w-full justify-start">
                 <Gift className="w-4 h-4 mr-2" />

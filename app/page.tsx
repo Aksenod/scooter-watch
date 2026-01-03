@@ -170,15 +170,17 @@ export default function LandingPage() {
   const [brokenPreviews, setBrokenPreviews] = useState<Record<string, boolean>>({})
   const [balance, setBalance] = useState<number>(0)
   const [pendingSum, setPendingSum] = useState<number>(0)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [onboardingDismissed, setOnboardingDismissed] = useState(true)
+  const [onboardingAfterLogin, setOnboardingAfterLogin] = useState(false)
 
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
     if (!token) {
       setIsAuthed(false)
       setAuthChecked(true)
+      setLoading(false)
       return
     }
 
@@ -200,6 +202,18 @@ export default function LandingPage() {
       setOnboardingDismissed(localStorage.getItem(key) === '1')
     } catch {
       setOnboardingDismissed(true)
+    }
+
+    try {
+      const shouldShowAfterLogin = localStorage.getItem('sw_dashboard_onboarding_after_login') === '1'
+      if (shouldShowAfterLogin) {
+        localStorage.removeItem('sw_dashboard_onboarding_after_login')
+        setOnboardingAfterLogin(true)
+      } else {
+        setOnboardingAfterLogin(false)
+      }
+    } catch {
+      setOnboardingAfterLogin(false)
     }
 
     ;(async () => {
@@ -272,6 +286,7 @@ export default function LandingPage() {
     } catch {
       // ignore
     }
+    setOnboardingAfterLogin(false)
     setOnboardingDismissed(true)
   }
 
@@ -288,6 +303,7 @@ export default function LandingPage() {
   }
 
   const progressToWithdraw = Math.min(100, (balance / 500) * 100)
+  const shouldShowOnboarding = !onboardingDismissed && (onboardingAfterLogin || (!loading && reports.length === 0))
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-surface/30 pb-24">
@@ -307,7 +323,7 @@ export default function LandingPage() {
           </Link>
         </div>
 
-        {!loading && reports.length === 0 && !onboardingDismissed ? (
+        {shouldShowOnboarding ? (
           <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
