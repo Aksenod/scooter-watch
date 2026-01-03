@@ -462,6 +462,9 @@ class ApiService {
         violationType: r.violationType,
         status: r.status,
         createdAt: r.createdAt,
+        ...(r.evidence?.find((e) => e.type === 'photo')?.url
+          ? { previewUrl: r.evidence.find((e) => e.type === 'photo')!.url }
+          : {}),
         ...(typeof r.rewardAmount === 'number' ? { rewardAmount: r.rewardAmount } : {}),
       }))
     }

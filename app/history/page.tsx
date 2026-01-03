@@ -14,6 +14,7 @@ interface Report {
   status: string
   createdAt: string
   rewardAmount?: number
+  previewUrl?: string
 }
 
 const filters = [
@@ -28,6 +29,7 @@ function HistoryPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [reports, setReports] = useState<Report[]>([])
+  const [brokenPreviews, setBrokenPreviews] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
   const [filter, setFilter] = useState<'all' | 'submitted' | 'underreview' | 'fineissued' | 'rejected'>('all')
@@ -175,8 +177,18 @@ function HistoryPageContent() {
                 <div className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 hover:shadow-md transition-all">
                   <div className="flex items-center gap-4">
                     {/* Icon */}
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-surface-2 to-surface flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                      <Camera className="w-5 h-5 text-muted-foreground" />
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-surface-2 to-surface flex items-center justify-center flex-shrink-0 overflow-hidden group-hover:scale-105 transition-transform">
+                      {report.previewUrl && !brokenPreviews[report.id] ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={report.previewUrl}
+                          alt="Превью"
+                          className="w-full h-full object-cover"
+                          onError={() => setBrokenPreviews((prev) => ({ ...prev, [report.id]: true }))}
+                        />
+                      ) : (
+                        <Camera className="w-5 h-5 text-muted-foreground" />
+                      )}
                     </div>
                     
                     {/* Content */}

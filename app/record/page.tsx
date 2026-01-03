@@ -4,7 +4,7 @@ import { type ChangeEvent, useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/shared/ui'
-import { Upload, CheckCircle, Image as ImageIcon, Sparkles, ArrowRight, Lightbulb, RotateCcw, ChevronDown } from 'lucide-react'
+import { Upload, CheckCircle, Image as ImageIcon, Sparkles, ArrowRight, Lightbulb, RotateCcw, ChevronDown, Trash2 } from 'lucide-react'
 import { BottomNav } from '@/shared/components/layout'
 import {
   CameraFab,
@@ -66,6 +66,21 @@ export default function RecordPage() {
     fileInputRef.current?.click()
   }
 
+  const clearSelectedPhoto = () => {
+    setError(null)
+    setAiResult(null)
+    setUploadedEvidenceUrl(null)
+    setPhotoFile(null)
+    if (photoPreviewUrl) URL.revokeObjectURL(photoPreviewUrl)
+    setPhotoPreviewUrl(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const retakePhoto = () => {
+    clearSelectedPhoto()
+    openCamera()
+  }
+
   const onSelectPhoto = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null
     if (!file) return
@@ -74,6 +89,7 @@ export default function RecordPage() {
     setAiResult(null)
     setUploadedEvidenceUrl(null)
     setPhotoFile(file)
+    if (photoPreviewUrl) URL.revokeObjectURL(photoPreviewUrl)
     setPhotoPreviewUrl(URL.createObjectURL(file))
   }
 
@@ -114,7 +130,7 @@ export default function RecordPage() {
   const submitReport = async () => {
     setError(null)
     if (!aiResult?.confidence || !uploadedEvidenceUrl) {
-      setError('Сначала сделайте фото и запустите AI-анализ')
+      setError('Сначала сделайте фото и нажмите «Далее»')
       return
     }
 
@@ -203,12 +219,38 @@ export default function RecordPage() {
 
           <div className="p-4 border-t border-border">
             <div className="flex items-center justify-center gap-3">
-              <CameraFab onClick={openCamera} disabled={isUploading || isClassifying} />
-              {photoFile && !aiResult && (
-                <Button onClick={uploadPhoto} disabled={isUploading} className="shadow-lg shadow-primary/20">
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Анализировать
-                </Button>
+              {!photoPreviewUrl && (
+                <CameraFab onClick={openCamera} disabled={isUploading || isClassifying} />
+              )}
+
+              {photoFile && photoPreviewUrl && !aiResult && (
+                <>
+                  <Button
+                    onClick={uploadPhoto}
+                    disabled={isUploading || isClassifying}
+                    className="shadow-lg shadow-primary/20"
+                  >
+                    Далее
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={retakePhoto}
+                    disabled={isUploading || isClassifying}
+                  >
+                    <RotateCcw className="w-4 h-4 mr-2" />
+                    Переснять
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={clearSelectedPhoto}
+                    disabled={isUploading || isClassifying}
+                    aria-label="Удалить фото"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </>
               )}
             </div>
           </div>

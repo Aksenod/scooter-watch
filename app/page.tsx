@@ -12,6 +12,7 @@ type Report = {
   status: string
   createdAt: string
   rewardAmount?: number
+  previewUrl?: string
 }
 
 function GuestLanding() {
@@ -42,8 +43,8 @@ function GuestLanding() {
             Снимайте нарушения ПДД самокатчиками, наш AI проверит и классифицирует, а вы получите до 20% от штрафа
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/auth" className="inline-flex">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+            <Link href="/auth" className="inline-flex w-full sm:w-auto justify-center">
               <Button size="lg" className="text-lg px-8 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
                 <Camera className="w-5 h-5 mr-2" />
                 Начать бесплатно
@@ -166,6 +167,7 @@ export default function LandingPage() {
   const [isAuthed, setIsAuthed] = useState(false)
   const [userLabel, setUserLabel] = useState<string>('')
   const [reports, setReports] = useState<Report[]>([])
+  const [brokenPreviews, setBrokenPreviews] = useState<Record<string, boolean>>({})
   const [balance, setBalance] = useState<number>(0)
   const [pendingSum, setPendingSum] = useState<number>(0)
   const [loading, setLoading] = useState(false)
@@ -399,8 +401,18 @@ export default function LandingPage() {
                 {recentReports.map((r) => (
                   <Link key={r.id} href={`/case?id=${r.id}`} className="block group">
                     <div className="flex items-center gap-4 rounded-xl p-3 hover:bg-surface transition-colors">
-                      <div className="w-10 h-10 rounded-lg bg-surface-2 flex items-center justify-center flex-shrink-0 group-hover:bg-surface transition-colors">
-                        <Camera className="w-5 h-5 text-muted-foreground" />
+                      <div className="w-10 h-10 rounded-lg bg-surface-2 flex items-center justify-center flex-shrink-0 overflow-hidden group-hover:bg-surface transition-colors">
+                        {r.previewUrl && !brokenPreviews[r.id] ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={r.previewUrl}
+                            alt="Превью"
+                            className="w-full h-full object-cover"
+                            onError={() => setBrokenPreviews((prev) => ({ ...prev, [r.id]: true }))}
+                          />
+                        ) : (
+                          <Camera className="w-5 h-5 text-muted-foreground" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">

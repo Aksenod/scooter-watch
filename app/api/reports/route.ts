@@ -15,6 +15,12 @@ export async function GET(req: NextRequest) {
       },
       orderBy: { createdAt: 'desc' },
       include: {
+        evidence: {
+          where: { type: 'photo' },
+          orderBy: { createdAt: 'asc' },
+          take: 1,
+          select: { url: true },
+        },
         reward: true,
       },
     })
@@ -25,6 +31,7 @@ export async function GET(req: NextRequest) {
         violationType: r.violationType,
         status: r.status,
         createdAt: r.createdAt.toISOString(),
+        ...(r.evidence?.[0]?.url ? { previewUrl: r.evidence[0].url } : {}),
         ...(r.reward ? { rewardAmount: r.reward.amount } : {}),
       }))
     )
