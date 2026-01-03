@@ -431,7 +431,9 @@ class ApiService {
     });
   }
 
-  async verifyOTP(phone: string, code: string) {
+  async verifyOTP(phone: string, code: string, name?: string) {
+    const normalizedName = typeof name === 'string' ? name.trim() : ''
+
     if (isStaticHosting) {
       const normalizedPhone = phone.replace(/\D/g, '');
       return {
@@ -439,13 +441,14 @@ class ApiService {
         user: {
           id: `user_${normalizedPhone}`,
           phone: normalizedPhone,
-          name: `User ${normalizedPhone.slice(-4)}`,
+          name: normalizedName || `User ${normalizedPhone.slice(-4)}`,
         },
       };
     }
+
     return this.request<{ token: string; user: any }>('/api/auth/otp-verify', {
       method: 'POST',
-      body: JSON.stringify({ phone, code }),
+      body: JSON.stringify({ phone, code, ...(normalizedName ? { name: normalizedName } : {}) }),
     });
   }
 

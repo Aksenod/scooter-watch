@@ -6,7 +6,7 @@ import { otpStore } from '@/lib/auth/otp-store'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { phone, code } = body
+    const { phone, code, name } = body
 
     if (!phone || typeof phone !== 'string') {
       return NextResponse.json(
@@ -58,11 +58,13 @@ export async function POST(request: NextRequest) {
       where: { phone: normalizedPhone },
     })
 
+    const normalizedName = typeof name === 'string' ? name.trim() : ''
+
     if (!user) {
       user = await prisma.user.create({
         data: {
           phone: normalizedPhone,
-          name: `User ${normalizedPhone.slice(-4)}`, // Временное имя
+          name: normalizedName || `User ${normalizedPhone.slice(-4)}`,
         },
       })
 
@@ -73,6 +75,15 @@ export async function POST(request: NextRequest) {
           balance: 0,
         },
       })
+    } else if (normalizedName) {
+      const current = typeof user.name === 'string' ? user.name.trim() : ''
+      const isPlaceholder = current.startsWith('User ') && current.endsWith(normalizedPhone.slice(-4))
+      if (!current || isPlaceholder) {
+        user = await prisma.user.update({
+          where: { id: user.id },
+          data: { name: normalizedName },
+        })
+      }
     }
 
     // Генерируем токен (в MVP используем userId как токен)

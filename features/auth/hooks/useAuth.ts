@@ -23,11 +23,11 @@ export function useAuth() {
     }
   }, [])
 
-  const login = async (phone: string, code: string) => {
+  const login = async (phone: string, code: string, name?: string) => {
     setLoading(true)
     setError(null)
     try {
-      const data = await apiService.verifyOTP(phone, code)
+      const data = await apiService.verifyOTP(phone, code, name)
       localStorage.setItem('auth_token', data.token)
       localStorage.setItem('auth_user', JSON.stringify(data.user))
       setToken(data.token)

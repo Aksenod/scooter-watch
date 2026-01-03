@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Button } from '@/shared/ui'
 import { Upload, CheckCircle, Image as ImageIcon, Sparkles, ArrowRight, Lightbulb, RotateCcw, ChevronDown, Trash2 } from 'lucide-react'
 import { BottomNav } from '@/shared/components/layout'
+import { PwaInstallBanner } from '@/shared/components'
 import {
   CameraFab,
   ConfidenceBadge,
@@ -163,6 +164,7 @@ export default function RecordPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-surface/30 pb-28">
       <div className="max-w-md mx-auto p-4 space-y-5">
+        <PwaInstallBanner />
         {/* Header */}
         <div>
           <p className="text-sm text-muted-foreground font-medium">Новый отчёт</p>

@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 
+import { ServiceWorkerRegister } from './ServiceWorkerRegister'
+
 const basePath = process.env.NODE_ENV === 'production' && process.env.GITHUB_PAGES ? '/scooter-watch' : ''
 
 export const metadata: Metadata = {
@@ -38,6 +40,7 @@ export default function RootLayout({
     <html lang="ru">
       <body className={`${inter.variable} font-sans antialiased`}>
         <div className="min-h-screen bg-background">
+          <ServiceWorkerRegister basePath={basePath} />
           {children}
         </div>
       </body>

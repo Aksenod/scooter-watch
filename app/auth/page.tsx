@@ -8,11 +8,18 @@ import { ArrowLeft, Shield } from 'lucide-react'
 
 export default function AuthPage() {
   const router = useRouter()
-  const [step, setStep] = useState<'consent' | 'phone'>('consent')
+  const [step, setStep] = useState<'consent' | 'phone' | 'otp'>('consent')
+  const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
+  const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [refInfo, setRefInfo] = useState<string | null>(null)
+
+  const isStaticHosting = () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
+    return typeof window !== 'undefined' && (window.location.hostname.includes('github.io') || !apiUrl)
+  }
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -27,6 +34,41 @@ export default function AuthPage() {
     setStep('phone')
   }
 
+  const handleVerify = async () => {
+    setError(null)
+    if (!code || code.trim().length < 4) {
+      setError('Введите код')
+      return
+    }
+
+    const normalizedPhone = phone.replace(/\D/g, '')
+    const normalizedName = name.trim()
+
+    setLoading(true)
+    try {
+      const { apiService } = await import('@/lib/services/api')
+      const data = await apiService.verifyOTP(normalizedPhone, code.trim(), normalizedName)
+
+      localStorage.setItem('auth_token', data.token)
+      localStorage.setItem('auth_user', JSON.stringify(data.user))
+
+      try {
+        await apiService.applyPendingReferral()
+      } catch {
+        // ignore
+      }
+
+      localStorage.setItem('sw_pwa_install_after_login', '1')
+
+      router.push('/record')
+    } catch (e) {
+      console.error('Error:', e)
+      setError('Ошибка входа. Попробуйте снова.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleLogin = async () => {
     setError(null)
     if (!phone || phone.trim().length < 10) {
@@ -34,11 +76,20 @@ export default function AuthPage() {
       return
     }
 
+    const normalizedName = name.trim()
+
     setLoading(true)
     try {
       // Упрощённая авторизация без OTP для GitHub Pages
       // Нормализация номера телефона
       const normalizedPhone = phone.replace(/\D/g, '')
+
+      if (!isStaticHosting()) {
+        const { apiService } = await import('@/lib/services/api')
+        await apiService.requestOTP(normalizedPhone)
+        setStep('otp')
+        return
+      }
 
       // Генерируем простой ID из номера телефона
       const userId = `user_${normalizedPhone}`
@@ -47,7 +98,7 @@ export default function AuthPage() {
       const user = {
         id: userId,
         phone: normalizedPhone,
-        name: `User ${normalizedPhone.slice(-4)}`,
+        name: normalizedName || `User ${normalizedPhone.slice(-4)}`,
       }
 
       // Сохраняем в localStorage
@@ -60,6 +111,8 @@ export default function AuthPage() {
       } catch {
         // ignore
       }
+
+      localStorage.setItem('sw_pwa_install_after_login', '1')
 
       // Редирект на страницу записи
       router.push('/record')
@@ -112,6 +165,68 @@ export default function AuthPage() {
     )
   }
 
+  if (step === 'otp') {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <div className="flex-1 flex items-center justify-center px-4 py-12">
+          <Card className="w-full max-w-md">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl">Подтвердите вход</CardTitle>
+              <CardDescription>
+                Введите код из SMS
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Код
+                </label>
+                <Input
+                  inputMode="numeric"
+                  placeholder="1234"
+                  value={code}
+                  onChange={(e) => {
+                    setCode(e.target.value)
+                    if (error) setError(null)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && code && !loading) {
+                      handleVerify()
+                    }
+                  }}
+                />
+                {error ? (
+                  <p className="text-xs text-destructive mt-2">{error}</p>
+                ) : null}
+              </div>
+
+              <Button
+                onClick={handleVerify}
+                disabled={!code || loading}
+                className="w-full"
+              >
+                {loading ? 'Проверка...' : 'Подтвердить'}
+              </Button>
+
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => {
+                  setStep('phone')
+                  setCode('')
+                  setError(null)
+                }}
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Назад
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-1 flex items-center justify-center px-4 py-12">
@@ -119,7 +234,7 @@ export default function AuthPage() {
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Вход в приложение</CardTitle>
             <CardDescription>
-              Введите номер телефона для входа
+              Введите имя и номер телефона
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -128,6 +243,19 @@ export default function AuthPage() {
                 Реферальное приглашение сохранено. После входа бонус будет начислен пригласившему.
               </div>
             ) : null}
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Имя
+              </label>
+              <Input
+                placeholder="Ваше имя"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value)
+                  if (error) setError(null)
+                }}
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium mb-2">
                 Номер телефона
@@ -160,7 +288,7 @@ export default function AuthPage() {
               disabled={!phone || loading}
               className="w-full"
             >
-              {loading ? 'Вход...' : 'Войти'}
+              {loading ? 'Продолжить...' : 'Продолжить'}
             </Button>
 
             <Link href="/" className="block">
